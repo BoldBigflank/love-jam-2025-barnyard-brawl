@@ -1,0 +1,18 @@
+{
+    "tasks": [
+        {
+            "command": "love.exe --console \"${workspaceFolder}\"",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "label": "Run",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "type": "shell",
+            "problemMatcher": []
+        }
+    ],
+    "version": "2.0.0"
+}
