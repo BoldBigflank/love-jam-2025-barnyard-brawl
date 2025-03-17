@@ -15,7 +15,14 @@ function Grid:initialize(columns, rows)
 end
 
 function Grid:findClosestPosition(card)
+    -- Get card position
     local cardX, cardY = card:globalPosition()
+
+    -- If card is outside grid bounds, return nothing
+    if cardX + card.width < self.x or cardX > self.x + self.width or
+        cardY + card.height < self.y or cardY > self.y + self.height then
+        return nil, nil
+    end
     local closestX, closestY = 1, 1
     local minDistance = math.huge
 

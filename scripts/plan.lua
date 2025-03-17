@@ -8,10 +8,10 @@ local TILE_TYPES = {
 }
 function Plan:enter(previous, ...)
     self.sprites = {}
-    local grid = Grid:new(3, 3)
+    local grid = Grid:new(5, 6)
     self.sprites[1] = grid
-    grid.x = 100
-    grid.y = 100
+    grid.x = love.graphics.getWidth() / 2 - grid.width / 2
+    grid.y = love.graphics.getHeight() / 2 - grid.height / 2
     for i, image in ipairs({
         'assets/Square (outline)/bear.png',
         'assets/Square (outline)/buffalo.png',

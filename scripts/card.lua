@@ -48,7 +48,7 @@ function Card:update(dt)
             local closestX, closestY = self.parent:findClosestPosition(self)
             local currentX, currentY = self.parent:findCardPosition(self)
 
-            if currentX and currentY and (closestX ~= currentX or closestY ~= currentY) then
+            if closestX ~= nil and closestY ~= nil and currentX and currentY and (closestX ~= currentX or closestY ~= currentY) then
                 local targetCard = self.parent.grid[closestX][closestY]
                 if targetCard then
                     self.parent:swapCards(self, targetCard)
