@@ -6,15 +6,73 @@ local Card = class('Card', Sprite)
 -- Static variable to track currently dragged card
 Card.currentlyDragged = nil
 
-function Card:initialize(image)
+local cardData = {
+    ['bear'] = {
+        image = 'bear',
+        price = 1,
+        hp = 1,
+        damageMultiplier = 1,
+    },
+    ['buffalo'] = {
+        image = 'buffalo',
+        price = 1,
+        hp = 1,
+        damageMultiplier = 1,
+    },
+    ['chick'] = {
+        image = 'chick',
+        price = 1,
+        hp = 1,
+        damageMultiplier = 1,
+    },
+    ['chicken'] = {
+        image = 'chicken',
+        price = 1,
+        hp = 1,
+        damageMultiplier = 1,
+    },
+    ['cow'] = {
+        image = 'cow',
+        price = 1,
+        hp = 1,
+        damageMultiplier = 1,
+    },
+    ['crocodile'] = {
+        image = 'crocodile',
+        price = 1,
+        hp = 1,
+        damageMultiplier = 1,
+    },
+    ['giraffe'] = {
+        image = 'giraffe',
+        price = 1,
+        hp = 1,
+        damageMultiplier = 1,
+    },
+    ['hippo'] = {
+        image = 'hippo',
+        price = 1,
+        hp = 1,
+        damageMultiplier = 1,
+    },
+}
+function Card:initialize(name)
+    local data = cardData[name]
+    local image = 'assets/Square (outline)/' .. data.image .. '.png'
     Sprite.initialize(self, image)
     self.dragging = {
         diffX = 0,
         diffY = 0,
         active = false,
         originalX = 0,
-        originalY = 0
+        originalY = 0,
     }
+    self.purchased = false
+    self.price = data.price
+    self.hp = data.hp
+    self.damageMultiplier = data.damageMultiplier
+    self.speedMultiplier = data.speedMultiplier
+    self.name = name
 end
 
 function Card:update(dt)
@@ -49,6 +107,10 @@ function Card:update(dt)
             local currentX, currentY = self.parent:findCardPosition(self)
 
             if closestX ~= nil and closestY ~= nil and currentX and currentY and (closestX ~= currentX or closestY ~= currentY) then
+                if not self.purchased and closestY > 3 then
+                    self.purchased = true
+                    GameManager:getInstance():addGold(-1 * self.price)
+                end
                 local targetCard = self.parent.grid[closestX][closestY]
                 if targetCard then
                     self.parent:swapCards(self, targetCard)
@@ -84,7 +146,12 @@ function Card:update(dt)
 end
 
 function Card:render()
+    if not self.purchased then
+        love.graphics.setColor(1, 1, 1, 0.5)
+    end
+
     Sprite.render(self)
+    love.graphics.setColor(1, 1, 1, 1)
 end
 
 return Card

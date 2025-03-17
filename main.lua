@@ -4,6 +4,8 @@ Sprite = require('scripts.sprite')
 Title = require('scripts.title')
 Flux = require('libraries.flux')
 Game = require('scripts.game')
+GameManager = require('scripts.game_manager')
+
 Manager = roomy.new()
 
 function love.load()

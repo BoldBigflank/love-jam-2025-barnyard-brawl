@@ -13,14 +13,14 @@ function Plan:enter(previous, ...)
     grid.x = love.graphics.getWidth() / 2 - grid.width / 2
     grid.y = love.graphics.getHeight() / 2 - grid.height / 2
     for i, image in ipairs({
-        'assets/Square (outline)/bear.png',
-        'assets/Square (outline)/buffalo.png',
-        'assets/Square (outline)/chick.png',
-        'assets/Square (outline)/chicken.png',
-        'assets/Square (outline)/cow.png',
-        'assets/Square (outline)/crocodile.png',
-        'assets/Square (outline)/giraffe.png',
-        'assets/Square (outline)/hippo.png',
+        'bear',
+        'buffalo',
+        'chick',
+        'chicken',
+        'cow',
+        'crocodile',
+        'giraffe',
+        'hippo',
     }) do
         local card = Card(image)
         card.width = 100
@@ -37,7 +37,7 @@ end
 
 function Plan:draw()
     love.graphics.setColor(1, 1, 1)
-    love.graphics.print("Plan Phase", 400, 300)
+    love.graphics.print("Gold: " .. GameManager:getInstance().currentGold, 400, 0)
     for _, sprite in pairs(self.sprites) do
         sprite:render()
     end
