@@ -62,11 +62,15 @@ function Grid:swapCards(card1, card2)
         self.grid[x1][y1] = card2
         self.grid[x2][y2] = card1
 
-        -- Update card positions
-        card1.x = (x2 - 1) * 110
-        card1.y = (y2 - 1) * 110
-        card2.x = (x1 - 1) * 110
-        card2.y = (y1 - 1) * 110
+        -- Update card positions with tweening
+        Flux.to(card1, 0.3, {
+            x = (x2 - 1) * 110,
+            y = (y2 - 1) * 110
+        }):ease("quadout")
+        Flux.to(card2, 0.3, {
+            x = (x1 - 1) * 110,
+            y = (y1 - 1) * 110
+        }):ease("quadout")
     end
 end
 

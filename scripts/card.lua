@@ -1,6 +1,6 @@
 class = require 'libraries.middleclass'
 Sprite = require 'scripts.sprite'
-
+flux = require 'libraries.flux'
 local Card = class('Card', Sprite)
 
 -- Static variable to track currently dragged card
@@ -56,13 +56,17 @@ function Card:update(dt)
                     -- If target position is empty, just move the card there
                     self.parent.grid[currentX][currentY] = nil
                     self.parent.grid[closestX][closestY] = self
-                    self.x = (closestX - 1) * 110
-                    self.y = (closestY - 1) * 110
+                    Flux.to(self, 0.3, {
+                        x = (closestX - 1) * 110,
+                        y = (closestY - 1) * 110
+                    }):ease("quadout")
                 end
             else
                 -- If no valid new position found, reset to original position
-                self.x = self.dragging.originalX
-                self.y = self.dragging.originalY
+                Flux.to(self, 0.3, {
+                    x = self.dragging.originalX,
+                    y = self.dragging.originalY
+                }):ease("quadout")
             end
         end
     else
