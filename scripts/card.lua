@@ -11,7 +11,9 @@ function Card:initialize(image)
     self.dragging = {
         diffX = 0,
         diffY = 0,
-        active = false
+        active = false,
+        originalX = 0,
+        originalY = 0
     }
 end
 
@@ -32,11 +34,37 @@ function Card:update(dt)
             Card.currentlyDragged = self
             self.dragging.diffX = x - globalX
             self.dragging.diffY = y - globalY
+            -- Store original position when starting to drag
+            self.dragging.originalX = self.x
+            self.dragging.originalY = self.y
         end
     elseif self.dragging.active then
         -- Card is dropped
         self.dragging.active = false
         Card.currentlyDragged = nil
+
+        -- Find closest position and swap if needed
+        if self.parent then
+            local closestX, closestY = self.parent:findClosestPosition(self)
+            local currentX, currentY = self.parent:findCardPosition(self)
+
+            if currentX and currentY and (closestX ~= currentX or closestY ~= currentY) then
+                local targetCard = self.parent.grid[closestX][closestY]
+                if targetCard then
+                    self.parent:swapCards(self, targetCard)
+                else
+                    -- If target position is empty, just move the card there
+                    self.parent.grid[currentX][currentY] = nil
+                    self.parent.grid[closestX][closestY] = self
+                    self.x = (closestX - 1) * 110
+                    self.y = (closestY - 1) * 110
+                end
+            else
+                -- If no valid new position found, reset to original position
+                self.x = self.dragging.originalX
+                self.y = self.dragging.originalY
+            end
+        end
     else
         self.dragging.active = false
     end

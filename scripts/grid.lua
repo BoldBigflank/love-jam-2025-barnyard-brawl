@@ -14,6 +14,55 @@ function Grid:initialize(columns, rows)
     self.height = rows * 110
 end
 
+function Grid:findClosestPosition(card)
+    local cardX, cardY = card:globalPosition()
+    local closestX, closestY = 1, 1
+    local minDistance = math.huge
+
+    for i = 1, self.columns do
+        for j = 1, self.rows do
+            local gridX = self.x + (i - 1) * 110
+            local gridY = self.y + (j - 1) * 110
+            local distance = math.sqrt((cardX - gridX) ^ 2 + (cardY - gridY) ^ 2)
+
+            if distance < minDistance then
+                minDistance = distance
+                closestX, closestY = i, j
+            end
+        end
+    end
+
+    return closestX, closestY
+end
+
+function Grid:findCardPosition(card)
+    for i = 1, self.columns do
+        for j = 1, self.rows do
+            if self.grid[i][j] == card then
+                return i, j
+            end
+        end
+    end
+    return nil, nil
+end
+
+function Grid:swapCards(card1, card2)
+    local x1, y1 = self:findCardPosition(card1)
+    local x2, y2 = self:findCardPosition(card2)
+
+    if x1 and y1 and x2 and y2 then
+        -- Swap positions in grid
+        self.grid[x1][y1] = card2
+        self.grid[x2][y2] = card1
+
+        -- Update card positions
+        card1.x = (x2 - 1) * 110
+        card1.y = (y2 - 1) * 110
+        card2.x = (x1 - 1) * 110
+        card2.y = (y1 - 1) * 110
+    end
+end
+
 function Grid:update(dt)
     for i = 1, self.columns do
         for j = 1, self.rows do
