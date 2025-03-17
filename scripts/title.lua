@@ -1,3 +1,5 @@
+Plan = require 'scripts.plan'
+
 local title = {}
 
 function title:enter(previous, ...)
@@ -23,7 +25,7 @@ end
 
 function title:keypressed(key)
     if key == 'space' then
-        manager:pop()
+        Manager:push(Plan)
     end
 end
 

@@ -2,6 +2,11 @@
     "tasks": [
         {
             "command": "love.exe --console \"${workspaceFolder}\"",
+            "presentation": {
+                "clear": true,
+                "panel": "dedicated",
+                "close": true
+            },
             "group": {
                 "kind": "build",
                 "isDefault": true
