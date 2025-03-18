@@ -7,7 +7,7 @@ function GameManager:initialize()
     self.gameInProgress = false
     self.currentLevel = 1
     self.highScore = 0
-    self.currentGold = 0
+    self.currentGold = 3
     self.grid = nil
 end
 

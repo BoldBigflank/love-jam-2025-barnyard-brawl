@@ -61,7 +61,14 @@ end
 
 function Plan:draw()
     love.graphics.setColor(1, 1, 1)
-    love.graphics.print("Gold: " .. GameManager:getInstance().currentGold, 400, 0)
+    local screenWidth = love.graphics.getWidth()
+    local screenHeight = love.graphics.getHeight()
+    love.graphics.printf("Gold: " .. GameManager:getInstance().currentGold,
+        0,
+        0,
+        screenWidth,
+        'center'
+    )
     for _, sprite in pairs(self.sprites) do
         sprite:render()
     end

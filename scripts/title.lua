@@ -1,32 +1,30 @@
 Plan = require 'scripts.plan'
 
-local title = {}
+local Title = {}
 
-function title:enter(previous, ...)
+function Title:enter(previous, ...)
     print('title')
 end
 
-function title:update(dt)
+function Title:update(dt)
     -- print('title update')
 end
 
-function title:draw()
-    -- print('title draw')
+function Title:draw()
     love.graphics.setColor(1, 1, 1)
-    love.graphics.circle('fill', 200, 200, 50)
-
-    love.graphics.setColor(0, 0, .4)
-    love.graphics.circle('fill', 200, 200, 15)
+    local screenWidth = love.graphics.getWidth()
+    local screenHeight = love.graphics.getHeight()
+    love.graphics.printf("Intro Screen", 0, screenHeight / 2 - 32, screenWidth, 'center')
 end
 
-function title:leave(next, ...)
+function Title:leave(next, ...)
     print('title leave')
 end
 
-function title:keypressed(key)
+function Title:keypressed(key)
     if key == 'space' then
         Manager:push(Plan)
     end
 end
 
-return title
+return Title
