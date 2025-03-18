@@ -1,5 +1,6 @@
 Grid = require 'scripts.grid'
 Card = require 'scripts.card'
+GameManager = require 'scripts.game_manager'
 local Plan = {}
 
 local TILE_TYPES = {
@@ -8,24 +9,26 @@ local TILE_TYPES = {
 }
 function Plan:enter(previous, ...)
     self.sprites = {}
-    local grid = Grid:new(5, 6)
+    -- local grid = Grid:new(5, 6)
+    local grid = GameManager:getInstance():loadGrid()
     self.sprites[1] = grid
     grid.x = love.graphics.getWidth() / 2 - grid.width / 2
     grid.y = love.graphics.getHeight() / 2 - grid.height / 2
-    for i, image in ipairs({
-        'bear',
-        'buffalo',
-        'chick',
-        'chicken',
-        'cow',
-        'crocodile',
-        'giraffe',
-        'hippo',
-    }) do
-        local card = Card(image)
-        card.width = 100
-        card.height = 100
-        grid:add(math.floor(i / 3) + 1, i % 3 + 1, card)
+    if grid:cardCount() == 0 then
+        print("Adding cards")
+        for i, image in ipairs({
+            'bear',
+            'buffalo',
+            'chick',
+            'chicken',
+            'cow',
+            'crocodile',
+            'giraffe',
+            'hippo',
+        }) do
+            local card = Card(image)
+            grid:add(math.floor(i / 3) + 1, i % 3 + 1, card)
+        end
     end
 end
 
@@ -44,6 +47,7 @@ function Plan:draw()
 end
 
 function Plan:leave(next, ...)
+    GameManager:getInstance():saveGrid(self.sprites[1]:toObject())
     for _, sprite in pairs(self.sprites) do
         sprite:destroy()
     end
@@ -51,7 +55,7 @@ end
 
 function Plan:keypressed(key)
     if key == 'escape' then
-        Manager:push(Game)
+        Manager:enter(Game)
     end
 end
 

@@ -1,12 +1,13 @@
 local class = require 'libraries.middleclass'
-
+getImage = require 'scripts.images'
 local Sprite = class('Sprite')
 
 function Sprite:initialize(imagePath)
     self.x = 0
     self.y = 0
     self.speed = 0 -- pixels per second
-    self.image = love.graphics.newImage(imagePath)
+    self.imagePath = imagePath
+    self.image = getImage(imagePath)
     self.rotation = 0
     self.rotationSpeed = 0 -- degrees per second
     self.width = self.image:getWidth()
@@ -36,10 +37,12 @@ function Sprite:removeChild(child)
 end
 
 function Sprite:removeChildren()
-    for _, child in ipairs(self.children) do
-        child.parent = nil
+    if self.children then
+        for _, child in ipairs(self.children) do
+            child.parent = nil
+        end
+        self.children = {}
     end
-    self.children = {}
 end
 
 function Sprite:setParent(parent)
@@ -67,15 +70,26 @@ function Sprite:render()
         love.graphics.translate(parentX, parentY)
     end
 
+    -- Calculate scale to fit while maintaining aspect ratio
+    local scaleX = self.width / self.image:getWidth()
+    local scaleY = self.height / self.image:getHeight()
+    local scale = math.min(scaleX, scaleY)
+
+    -- Center the image within the sprite bounds
+    local imageWidth = self.image:getWidth() * scale
+    local imageHeight = self.image:getHeight() * scale
+    local offsetX = (self.width - imageWidth) / 2
+    local offsetY = (self.height - imageHeight) / 2
+
     love.graphics.draw(
         self.image,
-        self.x,                               -- x
-        self.y,                               -- y
+        self.x + offsetX, -- x
+        self.y + offsetY, -- y
         self.rotation,
-        self.width / self.image:getWidth(),   -- scaleX
-        self.height / self.image:getHeight(), -- scaleY
-        0,                                    -- originX
-        0                                     -- originY
+        scale,            -- scaleX
+        scale,            -- scaleY
+        0,                -- originX
+        0                 -- originY
     )
     for _, child in ipairs(self.children) do
         child:render()
@@ -98,6 +112,13 @@ function Sprite:draw()
         love.graphics.rectangle('fill', self.x, self.y, self.width, self.height)
         love.graphics.setColor(1, 1, 1)
     end
+end
+
+function Sprite:destroy()
+    self:removeChildren()
+    self.parent = nil
+    self.image = nil
+    self.children = nil
 end
 
 return Sprite

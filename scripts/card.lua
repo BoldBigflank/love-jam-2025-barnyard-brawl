@@ -1,5 +1,6 @@
 class = require 'libraries.middleclass'
 Sprite = require 'scripts.sprite'
+getImage = require 'scripts.images'
 flux = require 'libraries.flux'
 local Card = class('Card', Sprite)
 
@@ -11,55 +12,71 @@ local cardData = {
         image = 'bear',
         price = 1,
         hp = 1,
+        block = 1,
+        damage = 1,
         damageMultiplier = 1,
     },
     ['buffalo'] = {
         image = 'buffalo',
         price = 1,
         hp = 1,
+        block = 1,
+        damage = 1,
         damageMultiplier = 1,
     },
     ['chick'] = {
         image = 'chick',
         price = 1,
         hp = 1,
+        block = 1,
+        damage = 1,
         damageMultiplier = 1,
     },
     ['chicken'] = {
         image = 'chicken',
         price = 1,
         hp = 1,
+        block = 1,
+        damage = 1,
         damageMultiplier = 1,
     },
     ['cow'] = {
         image = 'cow',
         price = 1,
         hp = 1,
+        block = 1,
+        damage = 1,
         damageMultiplier = 1,
     },
     ['crocodile'] = {
         image = 'crocodile',
         price = 1,
         hp = 1,
+        block = 1,
+        damage = 1,
         damageMultiplier = 1,
     },
     ['giraffe'] = {
         image = 'giraffe',
         price = 1,
         hp = 1,
+        block = 1,
+        damage = 1,
         damageMultiplier = 1,
     },
     ['hippo'] = {
         image = 'hippo',
         price = 1,
         hp = 1,
+        block = 1,
+        damage = 1,
         damageMultiplier = 1,
     },
 }
 function Card:initialize(name)
     local data = cardData[name]
-    local image = 'assets/Square (outline)/' .. data.image .. '.png'
-    Sprite.initialize(self, image)
+    local imagePath = 'assets/Square (outline)/' .. data.image .. '.png'
+    Sprite.initialize(self, imagePath)
     self.dragging = {
         diffX = 0,
         diffY = 0,
@@ -67,12 +84,45 @@ function Card:initialize(name)
         originalX = 0,
         originalY = 0,
     }
+    self.width = 100
+    self.height = 100
     self.purchased = false
     self.price = data.price
     self.hp = data.hp
+    self.block = data.block
+    self.damage = data.damage
     self.damageMultiplier = data.damageMultiplier
     self.speedMultiplier = data.speedMultiplier
     self.name = name
+    self.hpImage = getImage('assets/icons/suit_hearts.png')
+    self.damageImage = getImage('assets/icons/sword.png')
+    self.blockImage = getImage('assets/icons/shield.png')
+end
+
+function Card:toObject()
+    local object = {}
+    object.name = self.name
+    object.imagePath = self.imagePath
+    object.purchased = self.purchased
+    object.price = self.price
+    object.hp = self.hp
+    object.block = self.block
+    object.damage = self.damage
+    object.damageMultiplier = self.damageMultiplier
+    object.speedMultiplier = self.speedMultiplier
+    return object
+end
+
+function Card.fromObject(object)
+    local card = Card:new(object.name)
+    card.purchased = object.purchased
+    card.price = object.price
+    card.hp = object.hp
+    card.block = object.block
+    card.damage = object.damage
+    card.damageMultiplier = object.damageMultiplier
+    card.speedMultiplier = object.speedMultiplier
+    return card
 end
 
 function Card:update(dt)
@@ -151,6 +201,17 @@ function Card:render()
     end
 
     Sprite.render(self)
+    local globalX, globalY = self:globalPosition()
+    if not self.dragging.active then
+        love.graphics.draw(self.hpImage, globalX + self.width - 48, globalY, 0, 0.75, 0.75)
+        love.graphics.draw(self.blockImage, globalX + self.width - 48, globalY + 32, 0, 0.75, 0.75)
+        love.graphics.draw(self.damageImage, globalX, globalY, 0, 0.75, 0.75)
+
+        love.graphics.setColor(1, 0, 0)
+        love.graphics.printf(self.hp, globalX + self.width - 48, globalY + 8, 48, 'center')
+        love.graphics.printf(self.block, globalX + self.width - 48, globalY + 32 + 8, 48, 'center')
+        love.graphics.printf(self.damage, globalX, globalY + 8, 48, 'center')
+    end
     love.graphics.setColor(1, 1, 1, 1)
 end
 

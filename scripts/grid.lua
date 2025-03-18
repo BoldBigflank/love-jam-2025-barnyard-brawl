@@ -14,6 +14,18 @@ function Grid:initialize(columns, rows)
     self.height = rows * 110
 end
 
+function Grid:cardCount()
+    local count = 0
+    for i = 1, self.columns do
+        for j = 1, self.rows do
+            if self.grid[i][j] then
+                count = count + 1
+            end
+        end
+    end
+    return count
+end
+
 function Grid:findClosestPosition(card)
     -- Get card position
     local cardX, cardY = card:globalPosition()
@@ -72,6 +84,38 @@ function Grid:swapCards(card1, card2)
             y = (y1 - 1) * 110
         }):ease("quadout")
     end
+end
+
+function Grid:toObject()
+    local object = {}
+    object.columns = self.columns
+    object.rows = self.rows
+    object.grid = {}
+    for i = 1, self.columns do
+        object.grid[i] = {}
+        for j = 1, self.rows do
+            if self.grid[i][j] then
+                object.grid[i][j] = self.grid[i][j]:toObject()
+            end
+        end
+    end
+    return object
+end
+
+function Grid.fromObject(object)
+    local grid = Grid:new(object.columns, object.rows)
+    grid.grid = {}
+    for i = 1, grid.columns do
+        grid.grid[i] = {}
+    end
+    for i = 1, grid.columns do
+        for j = 1, grid.rows do
+            if object.grid[i][j] then
+                grid:add(i, j, Card.fromObject(object.grid[i][j]))
+            end
+        end
+    end
+    return grid
 end
 
 function Grid:update(dt)
