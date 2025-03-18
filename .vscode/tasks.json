@@ -1,7 +1,7 @@
 {
     "tasks": [
         {
-            "command": "love.exe --console \"${workspaceFolder}\"",
+            "command": "Stop-Process -Name love -Force -ErrorAction SilentlyContinue; love.exe --console \"${workspaceFolder}\"",
             "presentation": {
                 "clear": true,
                 "panel": "dedicated",

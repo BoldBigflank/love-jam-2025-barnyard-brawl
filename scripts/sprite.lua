@@ -7,11 +7,13 @@ function Sprite:initialize(imagePath)
     self.y = 0
     self.speed = 0 -- pixels per second
     self.imagePath = imagePath
-    self.image = getImage(imagePath)
+    if imagePath then
+        self.image = getImage(imagePath)
+        self.width = self.image:getWidth()
+        self.height = self.image:getHeight()
+    end
     self.rotation = 0
     self.rotationSpeed = 0 -- degrees per second
-    self.width = self.image:getWidth()
-    self.height = self.image:getHeight()
     self.parent = nil
     self.children = {}
     self.color = nil
@@ -55,7 +57,7 @@ end
 function Sprite:update(dt)
     self.x = self.x + (self.speed * dt)
     self.rotation = self.rotation + (self.rotationSpeed * dt)
-    if self.x > love.graphics.getWidth() then
+    if self.image and self.x > love.graphics.getWidth() then
         self.x = -self.image:getWidth()
     end
     for _, child in ipairs(self.children) do
@@ -71,29 +73,32 @@ function Sprite:render()
     end
 
     -- Calculate scale to fit while maintaining aspect ratio
-    local scaleX = self.width / self.image:getWidth()
-    local scaleY = self.height / self.image:getHeight()
-    local scale = math.min(scaleX, scaleY)
+    if self.image then
+        local scale = 1
+        local scaleX = self.width / self.image:getWidth()
+        local scaleY = self.height / self.image:getHeight()
+        scale = math.min(scaleX, scaleY)
+        -- Center the image within the sprite bounds
+        local imageWidth = self.image:getWidth() * scale
+        local imageHeight = self.image:getHeight() * scale
+        local offsetX = (self.width - imageWidth) / 2
+        local offsetY = (self.height - imageHeight) / 2
 
-    -- Center the image within the sprite bounds
-    local imageWidth = self.image:getWidth() * scale
-    local imageHeight = self.image:getHeight() * scale
-    local offsetX = (self.width - imageWidth) / 2
-    local offsetY = (self.height - imageHeight) / 2
-
-    love.graphics.draw(
-        self.image,
-        self.x + offsetX, -- x
-        self.y + offsetY, -- y
-        self.rotation,
-        scale,            -- scaleX
-        scale,            -- scaleY
-        0,                -- originX
-        0                 -- originY
-    )
-    for _, child in ipairs(self.children) do
-        child:render()
+        love.graphics.draw(
+            self.image,
+            self.x + offsetX, -- x
+            self.y + offsetY, -- y
+            self.rotation,
+            scale,            -- scaleX
+            scale,            -- scaleY
+            0,                -- originX
+            0                 -- originY
+        )
+        for _, child in ipairs(self.children) do
+            child:render()
+        end
     end
+
     love.graphics.pop()
 end
 
