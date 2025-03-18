@@ -125,6 +125,12 @@ function Card.fromObject(object)
     return card
 end
 
+function Card:isHovering()
+    local x, y = love.mouse.getPosition()
+    local globalX, globalY = self:globalPosition()
+    return x > globalX and x < globalX + self.width and y > globalY and y < globalY + self.height
+end
+
 function Card:update(dt)
     Sprite.update(self, dt)
 
@@ -133,10 +139,7 @@ function Card:update(dt)
         local globalX, globalY = self:globalPosition()
         if not self.dragging.active and
             not Card.currentlyDragged and -- Only allow dragging if no other card is being dragged
-            x > globalX and
-            x < globalX + self.width and
-            y > globalY and
-            y < globalY + self.height
+            self:isHovering()
         then
             self.dragging.active = true
             Card.currentlyDragged = self
@@ -202,7 +205,7 @@ function Card:render()
 
     Sprite.render(self)
     local globalX, globalY = self:globalPosition()
-    if not self.dragging.active then
+    if self:isHovering() then
         love.graphics.draw(self.hpImage, globalX + self.width - 48, globalY, 0, 0.75, 0.75)
         love.graphics.draw(self.blockImage, globalX + self.width - 48, globalY + 32, 0, 0.75, 0.75)
         love.graphics.draw(self.damageImage, globalX, globalY, 0, 0.75, 0.75)
