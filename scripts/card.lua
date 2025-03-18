@@ -2,6 +2,7 @@ class = require 'libraries.middleclass'
 Sprite = require 'scripts.sprite'
 getImage = require 'scripts.images'
 flux = require 'libraries.flux'
+require 'scripts.constants'
 local Card = class('Card', Sprite)
 
 -- Static variable to track currently dragged card
@@ -10,67 +11,67 @@ Card.currentlyDragged = nil
 local cardData = {
     ['bear'] = {
         image = 'bear',
-        price = 1,
-        hp = 1,
-        block = 1,
-        damage = 1,
-        damageMultiplier = 1,
+        price = DEFAULT_PRICE,
+        hp = DEFAULT_HP,
+        block = DEFAULT_BLOCK,
+        damage = DEFAULT_DAMAGE,
+        damageMultiplier = DEFAULT_DAMAGE_MULTIPLIER,
     },
     ['buffalo'] = {
         image = 'buffalo',
-        price = 1,
-        hp = 1,
-        block = 1,
-        damage = 1,
-        damageMultiplier = 1,
+        price = DEFAULT_PRICE,
+        hp = DEFAULT_HP,
+        block = DEFAULT_BLOCK,
+        damage = DEFAULT_DAMAGE,
+        damageMultiplier = DEFAULT_DAMAGE_MULTIPLIER,
     },
     ['chick'] = {
         image = 'chick',
-        price = 1,
-        hp = 1,
-        block = 1,
-        damage = 1,
-        damageMultiplier = 1,
+        price = DEFAULT_PRICE,
+        hp = DEFAULT_HP,
+        block = DEFAULT_BLOCK,
+        damage = DEFAULT_DAMAGE,
+        damageMultiplier = DEFAULT_DAMAGE_MULTIPLIER,
     },
     ['chicken'] = {
         image = 'chicken',
-        price = 1,
-        hp = 1,
-        block = 1,
-        damage = 1,
-        damageMultiplier = 1,
+        price = DEFAULT_PRICE,
+        hp = DEFAULT_HP,
+        block = DEFAULT_BLOCK,
+        damage = DEFAULT_DAMAGE,
+        damageMultiplier = DEFAULT_DAMAGE_MULTIPLIER,
     },
     ['cow'] = {
         image = 'cow',
-        price = 1,
-        hp = 1,
-        block = 1,
-        damage = 1,
-        damageMultiplier = 1,
+        price = DEFAULT_PRICE,
+        hp = DEFAULT_HP,
+        block = DEFAULT_BLOCK,
+        damage = DEFAULT_DAMAGE,
+        damageMultiplier = DEFAULT_DAMAGE_MULTIPLIER,
     },
     ['crocodile'] = {
         image = 'crocodile',
-        price = 1,
-        hp = 1,
-        block = 1,
-        damage = 1,
-        damageMultiplier = 1,
+        price = DEFAULT_PRICE,
+        hp = DEFAULT_HP,
+        block = DEFAULT_BLOCK,
+        damage = DEFAULT_DAMAGE,
+        damageMultiplier = DEFAULT_DAMAGE_MULTIPLIER,
     },
     ['giraffe'] = {
         image = 'giraffe',
-        price = 1,
-        hp = 1,
-        block = 1,
-        damage = 1,
-        damageMultiplier = 1,
+        price = DEFAULT_PRICE,
+        hp = DEFAULT_HP,
+        block = DEFAULT_BLOCK,
+        damage = DEFAULT_DAMAGE,
+        damageMultiplier = DEFAULT_DAMAGE_MULTIPLIER,
     },
     ['hippo'] = {
         image = 'hippo',
-        price = 1,
-        hp = 1,
-        block = 1,
-        damage = 1,
-        damageMultiplier = 1,
+        price = DEFAULT_PRICE,
+        hp = DEFAULT_HP,
+        block = DEFAULT_BLOCK,
+        damage = DEFAULT_DAMAGE,
+        damageMultiplier = DEFAULT_DAMAGE_MULTIPLIER,
     },
 }
 function Card:initialize(name)
@@ -84,8 +85,8 @@ function Card:initialize(name)
         originalX = 0,
         originalY = 0,
     }
-    self.width = 100
-    self.height = 100
+    self.width = CARD_WIDTH
+    self.height = CARD_HEIGHT
     self.purchased = false
     self.price = data.price
     self.hp = data.hp
@@ -94,9 +95,9 @@ function Card:initialize(name)
     self.damageMultiplier = data.damageMultiplier
     self.speedMultiplier = data.speedMultiplier
     self.name = name
-    self.hpImage = getImage('assets/icons/suit_hearts.png')
-    self.damageImage = getImage('assets/icons/sword.png')
-    self.blockImage = getImage('assets/icons/shield.png')
+    self.hpImage = getImage('assets/icons/suit_hearts_outline.png')
+    self.damageImage = getImage('assets/icons/sword_outline.png')
+    self.blockImage = getImage('assets/icons/shield_outline.png')
 end
 
 function Card:toObject()
@@ -143,6 +144,7 @@ function Card:update(dt)
         then
             self.dragging.active = true
             Card.currentlyDragged = self
+            love.mouse.setCursor(CURSOR_HAND_CLOSED)
             self.dragging.diffX = x - globalX
             self.dragging.diffY = y - globalY
             -- Store original position when starting to drag
@@ -153,6 +155,7 @@ function Card:update(dt)
         -- Card is dropped
         self.dragging.active = false
         Card.currentlyDragged = nil
+        love.mouse.setCursor(CURSOR_HAND_OPEN)
 
         -- Find closest position and swap if needed
         if self.parent then
@@ -171,21 +174,26 @@ function Card:update(dt)
                     -- If target position is empty, just move the card there
                     self.parent.grid[currentX][currentY] = nil
                     self.parent.grid[closestX][closestY] = self
-                    Flux.to(self, 0.3, {
-                        x = (closestX - 1) * 110,
-                        y = (closestY - 1) * 110
-                    }):ease("quadout")
+                    Flux.to(self, TWEEN_DURATION, {
+                        x = (closestX - 1) * CELL_SIZE,
+                        y = (closestY - 1) * CELL_SIZE
+                    }):ease(TWEEN_EASE)
                 end
             else
                 -- If no valid new position found, reset to original position
-                Flux.to(self, 0.3, {
+                Flux.to(self, TWEEN_DURATION, {
                     x = self.dragging.originalX,
                     y = self.dragging.originalY
-                }):ease("quadout")
+                }):ease(TWEEN_EASE)
             end
         end
     else
         self.dragging.active = false
+        if self:isHovering() then
+            love.mouse.setCursor(CURSOR_HAND_OPEN)
+        else
+            love.mouse.setCursor(CURSOR_HAND)
+        end
     end
 
     if self.dragging.active then
@@ -200,22 +208,27 @@ end
 
 function Card:render()
     if not self.purchased then
-        love.graphics.setColor(1, 1, 1, 0.5)
+        love.graphics.setColor(COLOR_WHITE_TRANSPARENT)
     end
 
     Sprite.render(self)
     local globalX, globalY = self:globalPosition()
     if self:isHovering() then
-        love.graphics.draw(self.hpImage, globalX + self.width - 48, globalY, 0, 0.75, 0.75)
-        love.graphics.draw(self.blockImage, globalX + self.width - 48, globalY + 32, 0, 0.75, 0.75)
-        love.graphics.draw(self.damageImage, globalX, globalY, 0, 0.75, 0.75)
+        love.graphics.draw(self.hpImage, globalX + self.width - CARD_ICON_OFFSET, globalY, 0,
+            CARD_SCALE, CARD_SCALE)
+        love.graphics.draw(self.blockImage, globalX + self.width - CARD_ICON_OFFSET,
+            globalY + CARD_ICON_Y_SPACING, 0, CARD_SCALE, CARD_SCALE)
+        love.graphics.draw(self.damageImage, globalX, globalY, 0, CARD_SCALE, CARD_SCALE)
 
-        love.graphics.setColor(1, 0, 0)
-        love.graphics.printf(self.hp, globalX + self.width - 48, globalY + 8, 48, 'center')
-        love.graphics.printf(self.block, globalX + self.width - 48, globalY + 32 + 8, 48, 'center')
-        love.graphics.printf(self.damage, globalX, globalY + 8, 48, 'center')
+        love.graphics.setColor(COLOR_RED)
+        love.graphics.printf(self.hp, globalX + self.width - CARD_ICON_OFFSET,
+            globalY + CARD_TEXT_Y_OFFSET, CARD_ICON_OFFSET, 'center')
+        love.graphics.printf(self.block, globalX + self.width - CARD_ICON_OFFSET,
+            globalY + CARD_ICON_Y_SPACING + CARD_TEXT_Y_OFFSET, CARD_ICON_OFFSET, 'center')
+        love.graphics.printf(self.damage, globalX, globalY + CARD_TEXT_Y_OFFSET, CARD_ICON_OFFSET,
+            'center')
     end
-    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.setColor(COLOR_WHITE)
 end
 
 return Card

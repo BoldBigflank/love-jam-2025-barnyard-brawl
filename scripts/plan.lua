@@ -2,15 +2,11 @@ Grid = require 'scripts.grid'
 Card = require 'scripts.card'
 Button = require 'scripts.button'
 GameManager = require 'scripts.game_manager'
+require('scripts.constants')
 local Plan = {}
 
-local hand_cursor = love.mouse.newCursor('assets/cursors/hand_point.png', 0, 0)
-local hand_open = love.mouse.newCursor('assets/cursors/hand_open.png', 0, 0)
-local hand_closed = love.mouse.newCursor('assets/cursors/hand_closed.png', 0, 0)
-
 function Plan:enter(previous, ...)
-    local hand_cursor = love.mouse.newCursor('assets/cursors/hand_point.png', 0, 0)
-    love.mouse.setCursor(hand_cursor)
+    love.mouse.setCursor(CURSOR_HAND)
     self.sprites = {}
     -- Load grid
     local grid = GameManager:getInstance():loadGrid()
@@ -35,6 +31,7 @@ function Plan:enter(previous, ...)
     end
     -- Load buttons
     local button = Button:new('Battle')
+    button.color = "red"
     button.x = love.graphics.getWidth() - button.width - 20
     button.y = love.graphics.getHeight() - button.height - 20
     button.onTouch = function()
@@ -49,10 +46,10 @@ function Plan:update(dt)
     end
     -- Check for dragged card first (highest priority)
     if Card.currentlyDragged then
-        love.mouse.setCursor(hand_closed)
+        love.mouse.setCursor(CURSOR_HAND_CLOSED)
     else
         -- Default cursor
-        love.mouse.setCursor(hand_cursor)
+        love.mouse.setCursor(CURSOR_HAND_OPEN)
 
         -- Check if hovering over any card in the grid
         local grid = self.sprites[1]
@@ -60,7 +57,7 @@ function Plan:update(dt)
             for y = 1, grid.columns do
                 local card = grid.grid[y][x]
                 if card and card:isHovering() then
-                    love.mouse.setCursor(hand_open)
+                    love.mouse.setCursor(CURSOR_HAND_OPEN)
                     break
                 end
             end

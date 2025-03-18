@@ -1,5 +1,6 @@
 class = require 'libraries.middleclass'
 Sprite = require 'scripts.sprite'
+require 'scripts.constants'
 
 local Grid = class('Grid', Sprite)
 
@@ -10,8 +11,8 @@ function Grid:initialize(columns, rows)
     for i = 1, columns do
         self.grid[i] = {}
     end
-    self.width = columns * 110
-    self.height = rows * 110
+    self.width = columns * CELL_SIZE
+    self.height = rows * CELL_SIZE
 end
 
 function Grid:cardCount()
@@ -40,8 +41,8 @@ function Grid:findClosestPosition(card)
 
     for i = 1, self.columns do
         for j = 1, self.rows do
-            local gridX = self.x + (i - 1) * 110
-            local gridY = self.y + (j - 1) * 110
+            local gridX = self.x + (i - 1) * CELL_SIZE
+            local gridY = self.y + (j - 1) * CELL_SIZE
             local distance = math.sqrt((cardX - gridX) ^ 2 + (cardY - gridY) ^ 2)
 
             if distance < minDistance then
@@ -75,14 +76,14 @@ function Grid:swapCards(card1, card2)
         self.grid[x2][y2] = card1
 
         -- Update card positions with tweening
-        Flux.to(card1, 0.3, {
-            x = (x2 - 1) * 110,
-            y = (y2 - 1) * 110
-        }):ease("quadout")
-        Flux.to(card2, 0.3, {
-            x = (x1 - 1) * 110,
-            y = (y1 - 1) * 110
-        }):ease("quadout")
+        Flux.to(card1, TWEEN_DURATION, {
+            x = (x2 - 1) * CELL_SIZE,
+            y = (y2 - 1) * CELL_SIZE
+        }):ease(TWEEN_EASE)
+        Flux.to(card2, TWEEN_DURATION, {
+            x = (x1 - 1) * CELL_SIZE,
+            y = (y1 - 1) * CELL_SIZE
+        }):ease(TWEEN_EASE)
     end
 end
 
@@ -140,8 +141,9 @@ function Grid:render()
                     self.grid[i][j]:render()
                 end
             else
-                love.graphics.setColor(1, 1, 1)
-                love.graphics.rectangle('fill', self.x + (i - 1) * 110, self.y + (j - 1) * 110, 100, 100)
+                love.graphics.setColor(COLOR_WHITE)
+                love.graphics.rectangle('fill', self.x + (i - 1) * CELL_SIZE,
+                    self.y + (j - 1) * CELL_SIZE, CARD_WIDTH, CARD_HEIGHT)
             end
         end
     end
@@ -153,8 +155,8 @@ end
 function Grid:add(x, y, cell)
     self.grid[x][y] = cell
     cell:setParent(self)
-    cell.x = (x - 1) * 110
-    cell.y = (y - 1) * 110
+    cell.x = (x - 1) * CELL_SIZE
+    cell.y = (y - 1) * CELL_SIZE
 end
 
 return Grid

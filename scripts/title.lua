@@ -1,8 +1,7 @@
 Plan = require 'scripts.plan'
 Button = require 'scripts.button'
 local Title = {}
-
-local hand_cursor = love.mouse.newCursor('assets/cursors/hand_point.png', 0, 0)
+require('scripts.constants')
 
 function Title:enter(previous, ...)
     print('title')
@@ -12,7 +11,6 @@ function Title:enter(previous, ...)
     self.button.onTouch = function()
         Manager:push(Plan)
     end
-    love.mouse.setCursor(hand_cursor)
     --button:new(code, text, x, y, textColor, font, color)
 end
 

@@ -1,10 +1,6 @@
+require('scripts.constants')
 local Sprite = require("scripts.sprite")
-
 local Button = class('Button', Sprite)
-
-local hand_cursor = love.mouse.newCursor('assets/cursors/hand_point.png', 0, 0)
-local hand_open = love.mouse.newCursor('assets/cursors/hand_open.png', 0, 0)
-local hand_closed = love.mouse.newCursor('assets/cursors/hand_closed.png', 0, 0)
 
 function Button:initialize(text)
     Sprite.initialize(self)
@@ -14,6 +10,7 @@ function Button:initialize(text)
     self.font = love.graphics.setNewFont('assets/fonts/compass_9.ttf', 32)
     self.width = self.font:getWidth(self.text) + 20
     self.height = self.font:getHeight(self.text) + 20
+    self.color = "blue"
 end
 
 function Button:isHovering()
@@ -43,33 +40,29 @@ function Button:update(dt)
 end
 
 function Button:render()
-    Sprite.draw(self)
+    -- Sprite.draw(self)
 
     local buttonX = self.pressed and self.x + 4 or self.x
     local buttonY = self.pressed and self.y + 4 or self.y
 
+    local buttonColor = self.color == "blue" and COLOR_BLUE_BUTTON or COLOR_RED_BUTTON
     -- Shadow
-    local shadowColor = { 0, 0, 0, 0.5 }
-    love.graphics.setColor(shadowColor)
+    love.graphics.setColor(COLOR_BUTTON_SHADOW)
     love.graphics.rectangle('fill', self.x + 4, self.y + 4, self.width, self.height, 6, 6)
 
     -- Inner border
-    local innerBorderColor = { 54 / 255, 189 / 255, 247 / 255 }
-    love.graphics.setColor(innerBorderColor)
+    love.graphics.setColor(buttonColor.innerBorder)
     love.graphics.rectangle('fill', buttonX, buttonY, self.width, self.height, 6, 6)
 
     -- Fill
-    local fillColor = self.hovered and { 216 / 255, 240 / 255, 250 / 255 } or { 28 / 255, 159 / 255, 215 / 255 }
-    love.graphics.setColor(fillColor)
+    love.graphics.setColor(self.hovered and buttonColor.hover or buttonColor.fill)
     love.graphics.rectangle('fill', buttonX + 2, buttonY + 2, self.width - 4, self.height - 4, 6, 6)
 
     -- Border
-    local borderColor = { 22 / 255, 165 / 255, 168 / 255 }
-    love.graphics.setColor(borderColor)
+    love.graphics.setColor(buttonColor.border)
     love.graphics.rectangle('line', buttonX, buttonY, self.width, self.height, 6, 6)
 
-    local textColor = self.hovered and { 0, 0, 0 } or { 1, 1, 1 }
-    love.graphics.setColor(textColor)
+    love.graphics.setColor(self.hovered and COLOR_BLACK or COLOR_WHITE)
     love.graphics.printf(self.text, buttonX, buttonY + 10, self.width, 'center')
 end
 
