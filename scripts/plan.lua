@@ -2,7 +2,7 @@ Grid = require 'scripts.grid'
 Card = require 'scripts.card'
 Button = require 'scripts.button'
 GameManager = require 'scripts.game_manager'
-InfoBubble = require 'scripts.infobubble'
+InfoBubble = require 'scripts.info_bubble'
 require('scripts.constants')
 local Plan = {}
 
@@ -56,13 +56,14 @@ function Plan:update(dt)
 
         -- Check if hovering over any card in the grid
         local grid = Sprite.findByName(self.sprites, "Grid")
+        self.infoBubble.text = ""
         if grid then
             for x = 1, grid.rows do
                 for y = 1, grid.columns do
                     local card = grid.grid[y][x]
                     if card and card:isHovering() then
                         love.mouse.setCursor(CURSOR_HAND_OPEN)
-                        self.infoBubble.text = "Card " .. card.name .. " is hovering"
+                        self.infoBubble.text = card.description
                         break
                     end
                 end

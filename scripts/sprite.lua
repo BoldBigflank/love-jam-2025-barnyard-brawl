@@ -68,8 +68,10 @@ function Sprite:update(dt)
     if self.image and self.x > love.graphics.getWidth() then
         self.x = -self.image:getWidth()
     end
-    for _, child in ipairs(self.children) do
-        child:update(dt)
+    if self.children then
+        for _, child in ipairs(self.children) do
+            child:update(dt)
+        end
     end
 end
 

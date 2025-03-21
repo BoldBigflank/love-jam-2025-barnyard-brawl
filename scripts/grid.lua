@@ -133,6 +133,17 @@ end
 
 function Grid:render()
     local selected = nil
+    -- First render empty cells
+    for i = 1, self.columns do
+        for j = 1, self.rows do
+            if self.grid[i][j] == nil then
+                love.graphics.setColor(COLOR_WHITE)
+                love.graphics.rectangle('fill', self.x + (i - 1) * CELL_SIZE,
+                    self.y + (j - 1) * CELL_SIZE, CARD_WIDTH, CARD_HEIGHT)
+            end
+        end
+    end
+    -- Then render cards
     for i = 1, self.columns do
         for j = 1, self.rows do
             if self.grid[i][j] ~= nil then
@@ -141,10 +152,6 @@ function Grid:render()
                 else
                     self.grid[i][j]:render()
                 end
-            else
-                love.graphics.setColor(COLOR_WHITE)
-                love.graphics.rectangle('fill', self.x + (i - 1) * CELL_SIZE,
-                    self.y + (j - 1) * CELL_SIZE, CARD_WIDTH, CARD_HEIGHT)
             end
         end
     end

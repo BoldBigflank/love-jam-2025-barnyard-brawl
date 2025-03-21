@@ -11,67 +11,184 @@ Card.currentlyDragged = nil
 local cardData = {
     ['bear'] = {
         image = 'bear',
+        description = "Bear can take a lot of damage.",
         price = DEFAULT_PRICE,
         hp = DEFAULT_HP,
         block = DEFAULT_BLOCK,
         damage = DEFAULT_DAMAGE,
         damageMultiplier = DEFAULT_DAMAGE_MULTIPLIER,
+        attackRate = DEFAULT_ATTACK_RATE,
+        attackPositions = {
+            { 1,  0 },
+            { -1, 0 },
+            { 0,  1 },
+            { 0,  -1 },
+        },
+        moveRate = DEFAULT_MOVE_RATE,
+        movePositions = {
+            { 1,  0 },
+            { -1, 0 },
+            { 0,  1 },
+            { 0,  -1 },
+        },
     },
     ['buffalo'] = {
         image = 'buffalo',
+        description = "Buffalo can take a lot of damage.",
         price = DEFAULT_PRICE,
         hp = DEFAULT_HP,
-        block = DEFAULT_BLOCK,
+        block = DEFAULT_BLOCK + 1,
         damage = DEFAULT_DAMAGE,
         damageMultiplier = DEFAULT_DAMAGE_MULTIPLIER,
+        attackRate = DEFAULT_ATTACK_RATE,
+        attackPositions = {
+            { 1,  0 },
+            { -1, 0 },
+            { 0,  1 },
+            { 0,  -1 },
+        },
+        moveRate = DEFAULT_MOVE_RATE,
+        movePositions = {
+            { 1,  0 },
+            { -1, 0 },
+            { 0,  1 },
+            { 0,  -1 },
+        },
     },
     ['chick'] = {
         image = 'chick',
+        description = "Chick is quick and hits a lot.",
         price = DEFAULT_PRICE,
         hp = DEFAULT_HP,
         block = DEFAULT_BLOCK,
         damage = DEFAULT_DAMAGE,
         damageMultiplier = DEFAULT_DAMAGE_MULTIPLIER,
+        attackRate = DEFAULT_ATTACK_RATE,
+        attackPositions = {
+            { 1,  0 },
+            { -1, 0 },
+            { 0,  1 },
+            { 0,  -1 },
+        },
+        moveRate = DEFAULT_MOVE_RATE,
+
+        movePositions = {
+            { 1,  0 },
+            { -1, 0 },
+            { 0,  1 },
+            { 0,  -1 },
+        },
     },
     ['chicken'] = {
         image = 'chicken',
+        description = "Chicken is quick and hits a lot.",
         price = DEFAULT_PRICE,
         hp = DEFAULT_HP,
         block = DEFAULT_BLOCK,
         damage = DEFAULT_DAMAGE,
         damageMultiplier = DEFAULT_DAMAGE_MULTIPLIER,
+        attackRate = DEFAULT_ATTACK_RATE,
+        attackPositions = {
+            { 1,  0 },
+            { -1, 0 },
+            { 0,  1 },
+            { 0,  -1 },
+        },
+        moveRate = DEFAULT_MOVE_RATE,
+        movePositions = {
+            { 1,  0 },
+            { -1, 0 },
+            { 0,  1 },
+            { 0,  -1 },
+        },
     },
     ['cow'] = {
         image = 'cow',
+        description = "Cow is a tank that can block a lot of damage.",
         price = DEFAULT_PRICE,
         hp = DEFAULT_HP,
         block = DEFAULT_BLOCK,
         damage = DEFAULT_DAMAGE,
         damageMultiplier = DEFAULT_DAMAGE_MULTIPLIER,
+        attackRate = DEFAULT_ATTACK_RATE,
+        attackPositions = {
+            { 1,  0 },
+            { -1, 0 },
+            { 0,  1 },
+            { 0,  -1 },
+        },
+        moveRate = DEFAULT_MOVE_RATE,
+        movePositions = {
+            { 1,  0 },
+            { -1, 0 },
+            { 0,  1 },
+            { 0,  -1 },
+        },
     },
     ['crocodile'] = {
         image = 'crocodile',
+        description = "Crocodile does damage up to two spaces ahead.",
         price = DEFAULT_PRICE,
         hp = DEFAULT_HP,
         block = DEFAULT_BLOCK,
         damage = DEFAULT_DAMAGE,
         damageMultiplier = DEFAULT_DAMAGE_MULTIPLIER,
+        attackRate = DEFAULT_ATTACK_RATE,
+        attackPositions = {
+            { 1,  0 },
+            { -1, 0 },
+            { 0,  1 },
+            { 0,  -1 },
+        },
+        moveRate = DEFAULT_MOVE_RATE,
+        movePositions = {
+            { 1,  0 },
+            { -1, 0 },
+            { 0,  1 },
+            { 0,  -1 },
+        },
     },
     ['giraffe'] = {
         image = 'giraffe',
+        description = "Giraffe does damage in a wide range.",
         price = DEFAULT_PRICE,
         hp = DEFAULT_HP,
         block = DEFAULT_BLOCK,
         damage = DEFAULT_DAMAGE,
         damageMultiplier = DEFAULT_DAMAGE_MULTIPLIER,
+        attackPositions = {
+            { 1,  0 },
+            { -1, 0 },
+            { 0,  1 },
+            { 0,  -1 },
+        },
+        movePositions = {
+            { 1,  0 },
+            { -1, 0 },
+            { 0,  1 },
+            { 0,  -1 },
+        },
     },
     ['hippo'] = {
         image = 'hippo',
+        description = "Hippo does heavy damage to nearby enemies.",
         price = DEFAULT_PRICE,
         hp = DEFAULT_HP,
         block = DEFAULT_BLOCK,
         damage = DEFAULT_DAMAGE,
         damageMultiplier = DEFAULT_DAMAGE_MULTIPLIER,
+        attackPositions = {
+            { 1,  0 },
+            { -1, 0 },
+            { 0,  1 },
+            { 0,  -1 },
+        },
+        movePositions = {
+            { 1,  0 },
+            { -1, 0 },
+            { 0,  1 },
+            { 0,  -1 },
+        },
     },
 }
 function Card:initialize(name)
@@ -85,6 +202,7 @@ function Card:initialize(name)
         originalX = 0,
         originalY = 0,
     }
+    self.description = data.description
     self.width = CARD_WIDTH
     self.height = CARD_HEIGHT
     self.purchased = false
@@ -94,6 +212,16 @@ function Card:initialize(name)
     self.damage = data.damage
     self.damageMultiplier = data.damageMultiplier
     self.speedMultiplier = data.speedMultiplier
+    self.attackRate = data.attackRate
+    self.moveRate = data.moveRate
+    self.attackPositions = {}
+    for _, pos in ipairs(data.attackPositions) do
+        table.insert(self.attackPositions, { pos[1], pos[2] })
+    end
+    self.movePositions = {}
+    for _, pos in ipairs(data.movePositions) do
+        table.insert(self.movePositions, { pos[1], pos[2] })
+    end
     self.name = name
     self.hpImage = getImage('assets/icons/suit_hearts_outline.png')
     self.damageImage = getImage('assets/icons/sword_outline.png')
@@ -214,19 +342,51 @@ function Card:render()
     Sprite.render(self)
     local globalX, globalY = self:globalPosition()
     if self:isHovering() then
+        -- Icon
         love.graphics.draw(self.hpImage, globalX + self.width - CARD_ICON_OFFSET, globalY, 0,
             CARD_SCALE, CARD_SCALE)
-        love.graphics.draw(self.blockImage, globalX + self.width - CARD_ICON_OFFSET,
-            globalY + CARD_ICON_Y_SPACING, 0, CARD_SCALE, CARD_SCALE)
+        if self.block > 0 then
+            love.graphics.draw(self.blockImage, globalX + self.width - CARD_ICON_OFFSET,
+                globalY + CARD_ICON_Y_SPACING, 0, CARD_SCALE, CARD_SCALE)
+        end
         love.graphics.draw(self.damageImage, globalX, globalY, 0, CARD_SCALE, CARD_SCALE)
 
+        -- Shadow
+        love.graphics.setColor(COLOR_BUTTON_SHADOW)
+        love.graphics.printf(self.hp, globalX + self.width - CARD_ICON_OFFSET + 2,
+            globalY + CARD_TEXT_Y_OFFSET + 2, CARD_ICON_OFFSET, 'center')
+        if self.block > 0 then
+            love.graphics.printf(self.block, globalX + self.width - CARD_ICON_OFFSET + 2,
+                globalY + CARD_ICON_Y_SPACING + CARD_TEXT_Y_OFFSET + 2, CARD_ICON_OFFSET, 'center')
+        end
+        love.graphics.printf(self.damage, globalX + 2, globalY + CARD_TEXT_Y_OFFSET + 2,
+            CARD_ICON_OFFSET, 'center')
+
+        -- Text
         love.graphics.setColor(COLOR_RED)
         love.graphics.printf(self.hp, globalX + self.width - CARD_ICON_OFFSET,
             globalY + CARD_TEXT_Y_OFFSET, CARD_ICON_OFFSET, 'center')
-        love.graphics.printf(self.block, globalX + self.width - CARD_ICON_OFFSET,
-            globalY + CARD_ICON_Y_SPACING + CARD_TEXT_Y_OFFSET, CARD_ICON_OFFSET, 'center')
+        if self.block > 0 then
+            love.graphics.printf(self.block, globalX + self.width - CARD_ICON_OFFSET,
+                globalY + CARD_ICON_Y_SPACING + CARD_TEXT_Y_OFFSET, CARD_ICON_OFFSET, 'center')
+        end
         love.graphics.printf(self.damage, globalX, globalY + CARD_TEXT_Y_OFFSET, CARD_ICON_OFFSET,
             'center')
+
+        if not self.dragging.active and not Card.currentlyDragged then
+            -- Move positions
+            love.graphics.setColor(COLOR_BLUE)
+            for _, pos in ipairs(self.movePositions) do
+                love.graphics.circle('fill', globalX + (pos[1] + 0.5) * CELL_SIZE,
+                    globalY + (pos[2] + 0.5) * CELL_SIZE, 16)
+            end
+            -- Attack positions
+            love.graphics.setColor(COLOR_RED)
+            for _, pos in ipairs(self.attackPositions) do
+                love.graphics.circle('fill', globalX + (pos[1] + 0.5) * CELL_SIZE,
+                    globalY + (pos[2] + 0.5) * CELL_SIZE, 8)
+            end
+        end
     end
     love.graphics.setColor(COLOR_WHITE)
 end
