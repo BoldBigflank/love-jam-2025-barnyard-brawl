@@ -260,6 +260,30 @@ function Card:isHovering()
     return x > globalX and x < globalX + self.width and y > globalY and y < globalY + self.height
 end
 
+function Card:onDragStart()
+    local x, y = love.mouse.getPosition()
+    local globalX, globalY = self:globalPosition()
+    self.dragging.active = true
+    Card.currentlyDragged = self
+    love.mouse.setCursor(CURSOR_HAND_CLOSED)
+    self.dragging.diffX = x - globalX
+    self.dragging.diffY = y - globalY
+    -- Store original position when starting to drag
+    self.dragging.originalX = self.x
+    self.dragging.originalY = self.y
+end
+
+function Card:onDragEnd()
+    -- Card is dropped
+    self.dragging.active = false
+    Card.currentlyDragged = nil
+    love.mouse.setCursor(CURSOR_HAND_OPEN)
+
+    if self.parent then
+        self.parent:cardDropped(self, closestX, closestY)
+    end
+end
+
 function Card:update(dt)
     if self.parent.state ~= "shop" then
         return
@@ -268,68 +292,16 @@ function Card:update(dt)
 
     local x, y = love.mouse.getPosition()
     if love.mouse.isDown(1) then
-        local globalX, globalY = self:globalPosition()
         if not self.dragging.active and
-            not Card.currentlyDragged and -- Only allow dragging if no other card is being dragged
+            not Card.currentlyDragged and
             self:isHovering()
         then
-            self.dragging.active = true
-            Card.currentlyDragged = self
-            love.mouse.setCursor(CURSOR_HAND_CLOSED)
-            self.dragging.diffX = x - globalX
-            self.dragging.diffY = y - globalY
-            -- Store original position when starting to drag
-            self.dragging.originalX = self.x
-            self.dragging.originalY = self.y
-        end
-    elseif self.dragging.active then
-        -- Card is dropped
-        self.dragging.active = false
-        Card.currentlyDragged = nil
-        love.mouse.setCursor(CURSOR_HAND_OPEN)
-
-        -- Find closest position and swap if needed
-        if self.parent then
-            local closestX, closestY = self.parent:findClosestPosition(self)
-            local currentX, currentY = self.parent:findCardPosition(self)
-            local returnToOriginal = false
-            if closestX == nil or closestY == nil or currentX == nil or currentY == nil then
-                returnToOriginal = true
-            elseif closestX == currentX and closestY == currentY then -- Same position
-                returnToOriginal = true
-            elseif self.purchased and closestY < 4 then
-                returnToOriginal = true
-            elseif not self.purchased and GameManager:getInstance().currentGold < self.price then
-                returnToOriginal = true
-            end
-            local targetCard = self.parent.grid[closestX][closestY]
-            if not self.purchased and targetCard and targetCard.purchased then
-                returnToOriginal = true
-            end
-            if self.purchased and targetCard and not targetCard.purchased then
-                returnToOriginal = true
-            end
-            if returnToOriginal then
-                Flux.to(self, TWEEN_DURATION, {
-                    x = self.dragging.originalX,
-                    y = self.dragging.originalY
-                }):ease(TWEEN_EASE)
-                return
-            end
-
-            -- Purchase card if necessary
-            if not self.purchased and closestY > 3 then
-                if GameManager:getInstance().currentGold >= self.price then
-                    self.purchased = true
-                    GameManager:getInstance():addGold(-1 * self.price)
-                end
-            end
-
-            -- Swap cards if necessary
-            self.parent:swapPositions(currentX, currentY, closestX, closestY)
+            self:onDragStart()
         end
     else
-        self.dragging.active = false
+        if self.dragging.active then
+            self:onDragEnd()
+        end
         if self:isHovering() then
             love.mouse.setCursor(CURSOR_HAND_OPEN)
         else

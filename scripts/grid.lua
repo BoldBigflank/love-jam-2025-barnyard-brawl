@@ -68,47 +68,69 @@ function Grid:findCardPosition(card)
     return nil, nil
 end
 
-function Grid:swapCards(card1, card2)
-    local x1, y1 = self:findCardPosition(card1)
-    local x2, y2 = self:findCardPosition(card2)
-
-    if x1 and y1 and x2 and y2 then
-        -- Swap positions in grid
-        self.grid[x1][y1] = card2
-        self.grid[x2][y2] = card1
-
-        -- Update card positions with tweening
-        Flux.to(card1, TWEEN_DURATION, {
-            x = (x2 - 1) * CELL_SIZE,
-            y = (y2 - 1) * CELL_SIZE
-        }):ease(TWEEN_EASE)
-        Flux.to(card2, TWEEN_DURATION, {
-            x = (x1 - 1) * CELL_SIZE,
-            y = (y1 - 1) * CELL_SIZE
-        }):ease(TWEEN_EASE)
+function Grid:cardDropped(card)
+    if self.state ~= "shop" then
+        return
     end
+    local closestX, closestY = self:findClosestPosition(card)
+    local currentX, currentY = self:findCardPosition(card)
+    local returnToOriginal = false
+    if closestX == nil or closestY == nil or currentX == nil or currentY == nil then
+        returnToOriginal = true
+    elseif closestX == currentX and closestY == currentY then -- Same position
+        returnToOriginal = true
+    elseif card.purchased and closestY < 4 then
+        returnToOriginal = true
+    elseif not card.purchased and GameManager:getInstance().currentGold < card.price then
+        returnToOriginal = true
+    end
+    local targetCard = self.grid[closestX][closestY]
+    if not card.purchased and targetCard and targetCard.purchased then
+        returnToOriginal = true
+    end
+    if card.purchased and targetCard and not targetCard.purchased then
+        returnToOriginal = true
+    end
+    if returnToOriginal then
+        Flux.to(card, TWEEN_DURATION, {
+            x = card.dragging.originalX,
+            y = card.dragging.originalY
+        }):ease(TWEEN_EASE)
+        return
+    end
+
+    -- Purchase card if necessary
+    if not card.purchased and closestY > 3 then
+        if GameManager:getInstance().currentGold >= card.price then
+            card.purchased = true
+            GameManager:getInstance():addGold(-1 * card.price)
+        end
+    end
+
+    -- Swap cards if necessary
+    self:swapPositions(closestX, closestY, currentX, currentY)
 end
 
-function Grid:swapPositions(x1, y1, x2, y2)
-    local card1 = self.grid[x1][y1]
-    local card2 = self.grid[x2][y2]
+function Grid:swapPositions(gridX1, gridY1, gridX2, gridY2)
+    local card1 = self.grid[gridX1][gridY1]
+    local card2 = self.grid[gridX2][gridY2]
     if card1 then
-        self.grid[x2][y2] = card1
+        self.grid[gridX2][gridY2] = card1
         Flux.to(card1, TWEEN_DURATION, {
-            x = (x2 - 1) * CELL_SIZE,
-            y = (y2 - 1) * CELL_SIZE
+            x = (gridX2 - 1) * CELL_SIZE,
+            y = (gridY2 - 1) * CELL_SIZE
         }):ease(TWEEN_EASE)
     else
-        self.grid[x2][y2] = nil
+        self.grid[gridX2][gridY2] = nil
     end
     if card2 then
-        self.grid[x1][y1] = card2
+        self.grid[gridX1][gridY1] = card2
         Flux.to(card2, TWEEN_DURATION, {
-            x = (x1 - 1) * CELL_SIZE,
-            y = (y1 - 1) * CELL_SIZE
+            x = (gridX1 - 1) * CELL_SIZE,
+            y = (gridY1 - 1) * CELL_SIZE
         }):ease(TWEEN_EASE)
     else
-        self.grid[x1][y1] = nil
+        self.grid[gridX1][gridY1] = nil
     end
 end
 
