@@ -6,6 +6,7 @@ local Grid = class('Grid', Sprite)
 
 function Grid:initialize(columns, rows)
     self.name = "Grid"
+    self.state = "shop"
     self.columns = columns
     self.rows = rows
     self.grid = {}
@@ -88,6 +89,29 @@ function Grid:swapCards(card1, card2)
     end
 end
 
+function Grid:swapPositions(x1, y1, x2, y2)
+    local card1 = self.grid[x1][y1]
+    local card2 = self.grid[x2][y2]
+    if card1 then
+        self.grid[x2][y2] = card1
+        Flux.to(card1, TWEEN_DURATION, {
+            x = (x2 - 1) * CELL_SIZE,
+            y = (y2 - 1) * CELL_SIZE
+        }):ease(TWEEN_EASE)
+    else
+        self.grid[x2][y2] = nil
+    end
+    if card2 then
+        self.grid[x1][y1] = card2
+        Flux.to(card2, TWEEN_DURATION, {
+            x = (x1 - 1) * CELL_SIZE,
+            y = (y1 - 1) * CELL_SIZE
+        }):ease(TWEEN_EASE)
+    else
+        self.grid[x1][y1] = nil
+    end
+end
+
 function Grid:toObject()
     local object = {}
     object.columns = self.columns
@@ -136,11 +160,9 @@ function Grid:render()
     -- First render empty cells
     for i = 1, self.columns do
         for j = 1, self.rows do
-            if self.grid[i][j] == nil then
-                love.graphics.setColor(COLOR_WHITE)
-                love.graphics.rectangle('fill', self.x + (i - 1) * CELL_SIZE,
-                    self.y + (j - 1) * CELL_SIZE, CARD_WIDTH, CARD_HEIGHT)
-            end
+            love.graphics.setColor(j < 4 and COLOR_BLUE or COLOR_GREEN)
+            love.graphics.rectangle('fill', self.x + (i - 1) * CELL_SIZE,
+                self.y + (j - 1) * CELL_SIZE, CARD_WIDTH, CARD_HEIGHT, 4, 4)
         end
     end
     -- Then render cards

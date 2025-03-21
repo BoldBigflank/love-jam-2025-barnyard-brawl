@@ -261,6 +261,9 @@ function Card:isHovering()
 end
 
 function Card:update(dt)
+    if self.parent.state ~= "shop" then
+        return
+    end
     Sprite.update(self, dt)
 
     local x, y = love.mouse.getPosition()
@@ -289,31 +292,41 @@ function Card:update(dt)
         if self.parent then
             local closestX, closestY = self.parent:findClosestPosition(self)
             local currentX, currentY = self.parent:findCardPosition(self)
-
-            if closestX ~= nil and closestY ~= nil and currentX and currentY and (closestX ~= currentX or closestY ~= currentY) then
-                if not self.purchased and closestY > 3 then
-                    self.purchased = true
-                    GameManager:getInstance():addGold(-1 * self.price)
-                end
-                local targetCard = self.parent.grid[closestX][closestY]
-                if targetCard then
-                    self.parent:swapCards(self, targetCard)
-                else
-                    -- If target position is empty, just move the card there
-                    self.parent.grid[currentX][currentY] = nil
-                    self.parent.grid[closestX][closestY] = self
-                    Flux.to(self, TWEEN_DURATION, {
-                        x = (closestX - 1) * CELL_SIZE,
-                        y = (closestY - 1) * CELL_SIZE
-                    }):ease(TWEEN_EASE)
-                end
-            else
-                -- If no valid new position found, reset to original position
+            local returnToOriginal = false
+            if closestX == nil or closestY == nil or currentX == nil or currentY == nil then
+                returnToOriginal = true
+            elseif closestX == currentX and closestY == currentY then -- Same position
+                returnToOriginal = true
+            elseif self.purchased and closestY < 4 then
+                returnToOriginal = true
+            elseif not self.purchased and GameManager:getInstance().currentGold < self.price then
+                returnToOriginal = true
+            end
+            local targetCard = self.parent.grid[closestX][closestY]
+            if not self.purchased and targetCard and targetCard.purchased then
+                returnToOriginal = true
+            end
+            if self.purchased and targetCard and not targetCard.purchased then
+                returnToOriginal = true
+            end
+            if returnToOriginal then
                 Flux.to(self, TWEEN_DURATION, {
                     x = self.dragging.originalX,
                     y = self.dragging.originalY
                 }):ease(TWEEN_EASE)
+                return
             end
+
+            -- Purchase card if necessary
+            if not self.purchased and closestY > 3 then
+                if GameManager:getInstance().currentGold >= self.price then
+                    self.purchased = true
+                    GameManager:getInstance():addGold(-1 * self.price)
+                end
+            end
+
+            -- Swap cards if necessary
+            self.parent:swapPositions(currentX, currentY, closestX, closestY)
         end
     else
         self.dragging.active = false
@@ -375,15 +388,21 @@ function Card:render()
 
         if not self.dragging.active and not Card.currentlyDragged then
             -- Move positions
-            love.graphics.setColor(COLOR_BLUE)
             for _, pos in ipairs(self.movePositions) do
+                love.graphics.setColor(COLOR_BLUE)
                 love.graphics.circle('fill', globalX + (pos[1] + 0.5) * CELL_SIZE,
+                    globalY + (pos[2] + 0.5) * CELL_SIZE, 16)
+                love.graphics.setColor(COLOR_BLACK)
+                love.graphics.circle('line', globalX + (pos[1] + 0.5) * CELL_SIZE,
                     globalY + (pos[2] + 0.5) * CELL_SIZE, 16)
             end
             -- Attack positions
-            love.graphics.setColor(COLOR_RED)
             for _, pos in ipairs(self.attackPositions) do
+                love.graphics.setColor(COLOR_RED)
                 love.graphics.circle('fill', globalX + (pos[1] + 0.5) * CELL_SIZE,
+                    globalY + (pos[2] + 0.5) * CELL_SIZE, 8)
+                love.graphics.setColor(COLOR_BLACK)
+                love.graphics.circle('line', globalX + (pos[1] + 0.5) * CELL_SIZE,
                     globalY + (pos[2] + 0.5) * CELL_SIZE, 8)
             end
         end

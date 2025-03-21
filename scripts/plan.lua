@@ -78,7 +78,7 @@ function Plan:draw()
     local screenHeight = love.graphics.getHeight()
     love.graphics.printf("Gold: " .. GameManager:getInstance().currentGold,
         0,
-        0,
+        screenHeight - 48,
         screenWidth,
         'center'
     )
