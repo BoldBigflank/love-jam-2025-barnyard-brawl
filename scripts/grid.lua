@@ -5,6 +5,7 @@ require 'scripts.constants'
 local Grid = class('Grid', Sprite)
 
 function Grid:initialize(columns, rows)
+    self.name = "Grid"
     self.columns = columns
     self.rows = rows
     self.grid = {}

@@ -2,6 +2,14 @@ local class = require 'libraries.middleclass'
 getImage = require 'scripts.images'
 local Sprite = class('Sprite')
 
+function Sprite.findByName(sprites, name)
+    for _, sprite in ipairs(sprites) do
+        if sprite.name == name then
+            return sprite
+        end
+    end
+end
+
 function Sprite:initialize(imagePath)
     self.x = 0
     self.y = 0
