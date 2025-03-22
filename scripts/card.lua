@@ -334,6 +334,8 @@ function Card:update(dt)
         GameManager:getInstance().state == "game" then
         self:dragUpdate(dt)
     end
+    self.moveCooldown = self.moveCooldown - dt
+    self.attackCooldown = self.attackCooldown - dt
 end
 
 function Card:render()

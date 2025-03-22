@@ -68,6 +68,23 @@ function Grid:findCardPosition(card)
     return nil, nil
 end
 
+function Grid:findClosestEnemyCard(card)
+    local closestCard = nil
+    local minDistance = math.huge
+    for i = 1, self.columns do
+        for j = 1, self.rows do
+            if self.grid[i][j] and self.grid[i][j].isEnemy ~= card.isEnemy then
+                local distance = math.sqrt((card.x - i) ^ 2 + (card.y - j) ^ 2)
+                if distance < minDistance then
+                    minDistance = distance
+                    closestCard = self.grid[i][j]
+                end
+            end
+        end
+    end
+    return closestCard
+end
+
 function Grid:cardDropped(card)
     if self.state ~= "shop" then
         return
@@ -217,7 +234,8 @@ function Grid:validPosition(x, y, pos)
     end
 
     -- Check if the resulting position is within grid bounds
-    return x >= 1 and x <= self.columns and y >= 1 and y <= self.rows
+    local valid = x >= 1 and x <= self.columns and y >= 1 and y <= self.rows
+    return valid
 end
 
 function Grid:cardAtDirection(x, y, coordinates, direction)

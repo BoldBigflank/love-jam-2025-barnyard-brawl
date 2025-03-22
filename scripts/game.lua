@@ -38,9 +38,13 @@ function Game:activeUpdate(dt)
     end
     -- Go through the grid and do move and attack
     for _, card in pairs(grid:listCards()) do
+        local i, j = grid:findCardPosition(card)
+        if not i or not j then
+            return
+        end
         if card.attackCooldown <= 0 then
             for _, pos in ipairs(card.attackPositions) do
-                local enemy = grid:cardAtDirection(card.x, card.y, pos, card.direction)
+                local enemy = grid:cardAtDirection(i, j, pos, card.direction)
                 if enemy then
                     if enemy.isEnemy ~= card.isEnemy then
                         enemy:takeDamage(card.damage)
@@ -51,24 +55,26 @@ function Game:activeUpdate(dt)
             end
         end
         if card.moveCooldown <= 0 then
-            local bestX, bestY = card.x, card.y
             local bestDistance = 1000
+            local bestX, bestY = i, j
+            -- Get the closest enemy card
+            local enemyCard = grid:findClosestEnemyCard(card)
+            if not enemyCard then
+                return
+            end
+            enemyCardX, enemyCardY = grid:findCardPosition(enemyCard)
             for _, pos in ipairs(card.movePositions) do
-                local newX = card.x + pos[1]
-                local newY = card.y + pos[2]
-                if grid:validPosition(x, y, pos) then
-                    for _, card2 in pairs(grid:listCards()) do
-                        if card2.isEnemy ~= card.isEnemy then
-                            local distance = math.abs(newX - card2.x) + math.abs(newY - card2.y)
-                            if distance < bestDistance then
-                                bestDistance = distance
-                                bestX, bestY = newX, newY
-                            end
-                        end
+                local newX = i + pos[1]
+                local newY = j + pos[2]
+                if grid:validPosition(newX, newY) then
+                    local distance = math.abs(newX - enemyCardX) + math.abs(newY - enemyCardY)
+                    if distance < bestDistance then
+                        bestDistance = distance
+                        bestX, bestY = newX, newY
                     end
                 end
             end
-            grid:swapPositions(card.x, card.y, bestX, bestY)
+            grid:swapPositions(i, j, bestX, bestY)
             card.moveCooldown = card.moveRate
         end
     end

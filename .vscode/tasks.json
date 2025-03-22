@@ -5,7 +5,7 @@
             "presentation": {
                 "clear": true,
                 "panel": "dedicated",
-                "close": true
+                "close": false
             },
             "group": {
                 "kind": "build",
