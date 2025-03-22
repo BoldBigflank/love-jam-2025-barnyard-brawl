@@ -226,6 +226,7 @@ function Card:initialize(name)
     self.hpImage = getImage('assets/icons/suit_hearts_outline.png')
     self.damageImage = getImage('assets/icons/sword_outline.png')
     self.blockImage = getImage('assets/icons/shield_outline.png')
+    self.isEnemy = false
 end
 
 function Card:toObject()
@@ -294,7 +295,8 @@ function Card:update(dt)
     if love.mouse.isDown(1) then
         if not self.dragging.active and
             not Card.currentlyDragged and
-            self:isHovering()
+            self:isHovering() and
+            not self.isEnemy
         then
             self:onDragStart()
         end
@@ -320,9 +322,7 @@ function Card:update(dt)
 end
 
 function Card:render()
-    if not self.purchased then
-        love.graphics.setColor(COLOR_WHITE_TRANSPARENT)
-    end
+    love.graphics.setColor(COLOR_WHITE)
 
     Sprite.render(self)
     local globalX, globalY = self:globalPosition()

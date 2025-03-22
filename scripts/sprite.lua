@@ -42,8 +42,15 @@ function Sprite:addChild(child)
 end
 
 function Sprite:removeChild(child)
-    table.remove(self.children, child)
-    child.parent = nil
+    if self.children then
+        for i, c in ipairs(self.children) do
+            if c == child then
+                table.remove(self.children, i)
+                child.parent = nil
+                return
+            end
+        end
+    end
 end
 
 function Sprite:removeChildren()

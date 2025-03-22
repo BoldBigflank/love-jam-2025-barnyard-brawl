@@ -75,7 +75,9 @@ function Grid:cardDropped(card)
     local closestX, closestY = self:findClosestPosition(card)
     local currentX, currentY = self:findCardPosition(card)
     local returnToOriginal = false
-    if closestX == nil or closestY == nil or currentX == nil or currentY == nil then
+
+    -- Check if we have valid positions
+    if not closestX or not closestY or not currentX or not currentY then
         returnToOriginal = true
     elseif closestX == currentX and closestY == currentY then -- Same position
         returnToOriginal = true
@@ -84,13 +86,22 @@ function Grid:cardDropped(card)
     elseif not card.purchased and GameManager:getInstance().currentGold < card.price then
         returnToOriginal = true
     end
-    local targetCard = self.grid[closestX][closestY]
-    if not card.purchased and targetCard and targetCard.purchased then
+
+    -- Check if target position is within bounds
+    if not returnToOriginal and (closestX < 1 or closestX > self.columns or closestY < 1 or closestY > self.rows) then
         returnToOriginal = true
     end
-    if card.purchased and targetCard and not targetCard.purchased then
-        returnToOriginal = true
+
+    -- Check target card if it exists
+    if not returnToOriginal then
+        local targetCard = self.grid[closestX][closestY]
+        if not card.purchased and targetCard and targetCard.purchased then
+            returnToOriginal = true
+        elseif card.purchased and targetCard and not targetCard.purchased then
+            returnToOriginal = true
+        end
     end
+
     if returnToOriginal then
         Flux.to(card, TWEEN_DURATION, {
             x = card.dragging.originalX,
@@ -141,7 +152,7 @@ function Grid:toObject()
     object.grid = {}
     for i = 1, self.columns do
         object.grid[i] = {}
-        for j = 1, self.rows do
+        for j = 4, self.rows do
             if self.grid[i][j] then
                 object.grid[i][j] = self.grid[i][j]:toObject()
             end
@@ -209,6 +220,15 @@ function Grid:add(x, y, cell)
     cell:setParent(self)
     cell.x = (x - 1) * CELL_SIZE
     cell.y = (y - 1) * CELL_SIZE
+end
+
+function Grid:remove(x, y)
+    local card = self.grid[x][y]
+    if card then
+        self:removeChild(card)
+        card:destroy()
+    end
+    self.grid[x][y] = nil
 end
 
 return Grid

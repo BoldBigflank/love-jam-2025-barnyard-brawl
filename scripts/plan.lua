@@ -9,27 +9,14 @@ local Plan = {}
 function Plan:enter(previous, ...)
     love.mouse.setCursor(CURSOR_HAND)
     self.sprites = {}
+    GameManager:getInstance():changeState("shop")
+    Card.currentlyDragged = nil
     -- Load grid
     local grid = GameManager:getInstance():loadGrid()
     table.insert(self.sprites, grid)
     grid.x = love.graphics.getWidth() / 2 - grid.width / 2
     grid.y = love.graphics.getHeight() / 2 - grid.height / 2
-    if grid:cardCount() == 0 then
-        print("Adding cards")
-        for i, image in ipairs({
-            'bear',
-            'buffalo',
-            'chick',
-            'chicken',
-            'cow',
-            'crocodile',
-            'giraffe',
-            'hippo',
-        }) do
-            local card = Card(image)
-            grid:add(math.floor(i / 3) + 1, i % 3 + 1, card)
-        end
-    end
+
     -- Load buttons
     local button = Button:new('Battle')
     button.color = "red"
@@ -88,15 +75,9 @@ function Plan:draw()
 end
 
 function Plan:leave(next, ...)
-    GameManager:getInstance():saveGrid(self.sprites[1]:toObject())
+    GameManager:getInstance():saveGrid(Sprite.findByName(self.sprites, "Grid"))
     for _, sprite in pairs(self.sprites) do
         sprite:destroy()
-    end
-end
-
-function Plan:keypressed(key)
-    if key == 'escape' then
-        Manager:enter(Game)
     end
 end
 
