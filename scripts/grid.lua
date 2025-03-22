@@ -123,8 +123,22 @@ function Grid:cardDropped(card)
 end
 
 function Grid:swapPositions(gridX1, gridY1, gridX2, gridY2)
+    -- Validate input coordinates
+    if not gridX1 or not gridY1 or not gridX2 or not gridY2 then
+        return
+    end
+
+    -- Check if coordinates are within bounds
+    if gridX1 < 1 or gridX1 > self.columns or gridY1 < 1 or gridY1 > self.rows or
+        gridX2 < 1 or gridX2 > self.columns or gridY2 < 1 or gridY2 > self.rows then
+        return
+    end
+
+    -- Get cards at positions
     local card1 = self.grid[gridX1][gridY1]
     local card2 = self.grid[gridX2][gridY2]
+
+    -- Swap cards if they exist
     if card1 then
         self.grid[gridX2][gridY2] = card1
         Flux.to(card1, TWEEN_DURATION, {
@@ -134,6 +148,7 @@ function Grid:swapPositions(gridX1, gridY1, gridX2, gridY2)
     else
         self.grid[gridX2][gridY2] = nil
     end
+
     if card2 then
         self.grid[gridX1][gridY1] = card2
         Flux.to(card2, TWEEN_DURATION, {
@@ -175,6 +190,43 @@ function Grid.fromObject(object)
         end
     end
     return grid
+end
+
+function Grid:listCards()
+    local cards = {}
+    for i = 1, self.columns do
+        for j = 1, self.rows do
+            if self.grid[i][j] then
+                table.insert(cards, self.grid[i][j])
+            end
+        end
+    end
+    return cards
+end
+
+function Grid:validPosition(x, y, pos)
+    -- Validate input parameters
+    if not x or not y then
+        return false
+    end
+
+    -- Apply position offset if provided
+    if pos then
+        x = x + pos[1]
+        y = y + pos[2]
+    end
+
+    -- Check if the resulting position is within grid bounds
+    return x >= 1 and x <= self.columns and y >= 1 and y <= self.rows
+end
+
+function Grid:cardAtDirection(x, y, coordinates, direction)
+    local newX = x + coordinates[1]
+    local newY = y + coordinates[2] * direction
+    if not self:validPosition(newX, newY) then
+        return nil
+    end
+    return self.grid[newX][newY]
 end
 
 function Grid:update(dt)

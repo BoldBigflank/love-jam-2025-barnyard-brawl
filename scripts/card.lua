@@ -135,10 +135,8 @@ local cardData = {
         damageMultiplier = DEFAULT_DAMAGE_MULTIPLIER,
         attackRate = DEFAULT_ATTACK_RATE,
         attackPositions = {
-            { 1,  0 },
-            { -1, 0 },
-            { 0,  1 },
-            { 0,  -1 },
+            { 0, -1 },
+            { 0, -2 },
         },
         moveRate = DEFAULT_MOVE_RATE,
         movePositions = {
@@ -214,10 +212,12 @@ function Card:initialize(name)
     self.speedMultiplier = data.speedMultiplier
     self.attackRate = data.attackRate
     self.moveRate = data.moveRate
+    self.attackCooldown = 0
     self.attackPositions = {}
     for _, pos in ipairs(data.attackPositions) do
         table.insert(self.attackPositions, { pos[1], pos[2] })
     end
+    self.moveCooldown = 0
     self.movePositions = {}
     for _, pos in ipairs(data.movePositions) do
         table.insert(self.movePositions, { pos[1], pos[2] })
@@ -240,6 +240,8 @@ function Card:toObject()
     object.damage = self.damage
     object.damageMultiplier = self.damageMultiplier
     object.speedMultiplier = self.speedMultiplier
+    object.attackRate = self.attackRate
+    object.moveRate = self.moveRate
     return object
 end
 
@@ -285,12 +287,16 @@ function Card:onDragEnd()
     end
 end
 
-function Card:update(dt)
-    if self.parent.state ~= "shop" then
-        return
+function Card:takeDamage(damage)
+    self.hp = self.hp - damage
+    if self.hp <= 0 then
+        self.isDead = true
+        self:destroy()
     end
-    Sprite.update(self, dt)
+end
 
+function Card:dragUpdate(dt)
+    Sprite.update(self, dt)
     local x, y = love.mouse.getPosition()
     if love.mouse.isDown(1) then
         if not self.dragging.active and
@@ -318,6 +324,15 @@ function Card:update(dt)
         end
         self.x = x - self.dragging.diffX - parentX
         self.y = y - self.dragging.diffY - parentY
+    end
+end
+
+function Card:update(dt)
+    Sprite.update(self, dt)
+    self.direction = self.isEnemy and -1 or 1
+    if GameManager:getInstance().state == "shop" or
+        GameManager:getInstance().state == "game" then
+        self:dragUpdate(dt)
     end
 end
 
@@ -363,19 +378,19 @@ function Card:render()
             for _, pos in ipairs(self.movePositions) do
                 love.graphics.setColor(COLOR_BLUE)
                 love.graphics.circle('fill', globalX + (pos[1] + 0.5) * CELL_SIZE,
-                    globalY + (pos[2] + 0.5) * CELL_SIZE, 16)
+                    globalY + (self.direction * pos[2] + 0.5) * CELL_SIZE, 16)
                 love.graphics.setColor(COLOR_BLACK)
                 love.graphics.circle('line', globalX + (pos[1] + 0.5) * CELL_SIZE,
-                    globalY + (pos[2] + 0.5) * CELL_SIZE, 16)
+                    globalY + (self.direction * pos[2] + 0.5) * CELL_SIZE, 16)
             end
             -- Attack positions
             for _, pos in ipairs(self.attackPositions) do
                 love.graphics.setColor(COLOR_RED)
                 love.graphics.circle('fill', globalX + (pos[1] + 0.5) * CELL_SIZE,
-                    globalY + (pos[2] + 0.5) * CELL_SIZE, 8)
+                    globalY + (self.direction * pos[2] + 0.5) * CELL_SIZE, 8)
                 love.graphics.setColor(COLOR_BLACK)
                 love.graphics.circle('line', globalX + (pos[1] + 0.5) * CELL_SIZE,
-                    globalY + (pos[2] + 0.5) * CELL_SIZE, 8)
+                    globalY + (self.direction * pos[2] + 0.5) * CELL_SIZE, 8)
             end
         end
     end

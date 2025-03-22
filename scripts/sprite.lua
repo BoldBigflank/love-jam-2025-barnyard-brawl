@@ -25,6 +25,7 @@ function Sprite:initialize(imagePath)
     self.parent = nil
     self.children = {}
     self.color = nil
+    self.isDead = false
 end
 
 function Sprite:globalPosition()
