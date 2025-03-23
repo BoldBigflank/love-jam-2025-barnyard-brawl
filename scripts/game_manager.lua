@@ -36,41 +36,154 @@ local shopAnimals = {
     'whale'
 }
 
+local airCards = {
+    { name = 'chick' },
+    { name = 'duck' },
+    { name = 'parrot' },
+    { name = 'penguin' },
+    { name = 'owl' }
+}
+
+local treeCards = {
+    { name = 'monkey' },
+    { name = 'sloth' },
+    { name = 'snake' },
+    { name = 'gorilla', block = 3 }
+}
+local farmCards = {
+    { name = 'cow' },
+    { name = 'pig' },
+    { name = 'horse' },
+    { name = 'goat' },
+    { name = 'dog',  block = 3 }
+}
+
+local landCards = {
+    { name = 'giraffe' },
+    { name = 'elephant' },
+    { name = 'hippo' },
+    { name = 'panda' },
+    { name = 'bear' },
+    { name = 'zebra' },
+    { name = 'moose' },
+    { name = 'buffalo' },
+    { name = 'rhino',   block = 3 }
+}
+
+local waterCards = {
+    { name = 'crocodile' },
+    { name = 'frog' },
+    { name = 'walrus' },
+    { name = 'whale' },
+    { name = 'narwhal',  block = 3 }
+}
+
 local levelData = {
     [1] = {
-        cards = {
-            [1] = {
-                name = "bear",
-                hp = 10,
-                damage = 1,
-                block = 0,
-                x = 3,
-                y = 1
-            }
-        },
+        cards = farmCards,
         board = {
-            { 0, 0, 1, 0, 0 },
+            { 0, 1, 0, 2, 0 },
             { 0, 0, 0, 0, 0 },
             { 0, 0, 0, 0, 0 }
         }
     },
     [2] = {
-        cards = {
-            [1] = {
-                name = "bear",
-                hp = 10,
-                damage = 1,
-                block = 0,
-            }
-        },
+        cards = landCards,
+        board = {
+            { 2, 1, 0, 1, 2 },
+            { 0, 0, 3, 0, 0 },
+            { 0, 0, 2, 0, 0 }
+        }
+    },
+    [3] = {
+        cards = treeCards,
+        board = {
+            { 2, 1, 0, 1, 2 },
+            { 0, 0, 2, 0, 0 },
+            { 0, 0, 0, 0, 0 }
+        }
+    },
+    [4] = {
+        cards = airCards,
+        board = {
+            { 0, 1, 2, 3, 0 },
+            { 0, 1, 2, 0, 0 },
+            { 0, 1, 2, 3, 0 }
+        }
+    },
+    [5] = {
+        cards = waterCards,
         board = {
             { 0, 1, 0, 1, 0 },
-            { 0, 0, 1, 0, 0 },
-            { 0, 0, 0, 0, 0 }
+            { 2, 1, 2, 1, 2 },
+            { 0, 1, 0, 1, 0 }
+        }
+    },
+    [6] = {
+        cards = farmCards,
+        board = {
+            { 0, 1, 0, 1, 0 },
+            { 2, 0, 4, 0, 2 },
+            { 0, 3, 0, 3, 0 }
+        }
+    },
+    [7] = {
+        cards = landCards,
+        board = {
+            { 0, 4, 5, 5, 6 },
+            { 1, 3, 2, 1, 6 },
+            { 0, 4, 0, 0, 0 }
+        }
+    },
+    [8] = {
+        cards = treeCards,
+        board = {
+            { 0, 3, 0, 2, 1 },
+            { 1, 3, 2, 3, 1 },
+            { 1, 2, 0, 3, 0 }
+        }
+    },
+    [9] = {
+        cards = airCards,
+        board = {
+            { 0, 2, 2, 2, 0 },
+            { 3, 0, 3, 0, 3 },
+            { 0, 5, 5, 5, 0 }
+        }
+    },
+    [10] = {
+        cards = waterCards,
+        board = {
+            { 0, 0, 1, 1, 4 },
+            { 3, 5, 2, 5, 3 },
+            { 4, 1, 1, 0, 0 }
+        }
+    },
+    [11] = {
+        cards = farmCards,
+        board = {
+            { 0, 5, 4, 0, 0 },
+            { 1, 3, 5, 3, 1 },
+            { 0, 0, 4, 5, 0 }
+        }
+    },
+    [12] = {
+        cards = landCards,
+        board = {
+            { 9, 8, 7, 8, 9 },
+            { 1, 7, 2, 7, 1 },
+            { 6, 3, 6, 3, 6 }
+        }
+    },
+    [13] = {
+        cards = treeCards,
+        board = {
+            { 1, 2, 4, 2, 1 },
+            { 4, 1, 2, 1, 4 },
+            { 3, 4, 1, 4, 3 }
         }
     }
 }
-
 function GameManager:initialize()
     self.gameInProgress = false
     self.state = "shop"
@@ -153,10 +266,13 @@ function GameManager:loadGrid()
         for i = 1, #board do
             for j = 1, #board[i] do
                 if board[i][j] > 0 then
-                    local card = Card:new(cards[board[i][j]].name)
-                    card.hp = cards[board[i][j]].hp
-                    card.damage = cards[board[i][j]].damage
-                    card.block = cards[board[i][j]].block
+                    local cardData = cards[board[i][j]]
+                    local card = Card:new(cardData.name)
+                    if cardData.hp then card.hp = cardData.hp end
+                    if cardData.damage then card.damage = cardData.damage end
+                    if cardData.block then card.block = cardData.block end
+                    if cardData.attackRate then card.attackRate = cardData.attackRate end
+                    if cardData.moveRate then card.moveRate = cardData.moveRate end
                     card.isEnemy = true
                     grid:add(j, i, card)
                 end

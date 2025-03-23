@@ -262,7 +262,7 @@ function Card:onDragEnd()
 end
 
 function Card:takeDamage(damage)
-    self.hp = self.hp - damage
+    self.hp = self.hp - math.max(damage - self.block, 0)
     if self.hp <= 0 then
         self.isDead = true
         self:destroy()
