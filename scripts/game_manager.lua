@@ -4,20 +4,42 @@ Grid = require 'scripts.grid'
 local GameManager = Class('GameManager')
 
 local shopAnimals = {
+    'zebra',
     'bear',
     'buffalo',
     'chick',
     'chicken',
     'cow',
     'crocodile',
+    'dog',
+    'duck',
+    'elephant',
+    'frog',
     'giraffe',
-    'hippo'
+    'goat',
+    'gorilla',
+    'hippo',
+    'horse',
+    'monkey',
+    'moose',
+    'narwhal',
+    'owl',
+    'panda',
+    'parrot',
+    'penguin',
+    'pig',
+    'rabbit',
+    'rhino',
+    'sloth',
+    'snake',
+    'walrus',
+    'whale'
 }
 
 local levelData = {
     [1] = {
         cards = {
-            {
+            [1] = {
                 name = "bear",
                 hp = 10,
                 damage = 1,
@@ -25,34 +47,26 @@ local levelData = {
                 x = 3,
                 y = 1
             }
+        },
+        board = {
+            { 0, 0, 1, 0, 0 },
+            { 0, 0, 0, 0, 0 },
+            { 0, 0, 0, 0, 0 }
         }
     },
     [2] = {
         cards = {
-            {
+            [1] = {
                 name = "bear",
                 hp = 10,
                 damage = 1,
                 block = 0,
-                x = 3,
-                y = 2
-            },
-            {
-                name = "bear",
-                hp = 10,
-                damage = 1,
-                block = 0,
-                x = 2,
-                y = 1
-            },
-            {
-                name = "bear",
-                hp = 10,
-                damage = 1,
-                block = 0,
-                x = 4,
-                y = 1
             }
+        },
+        board = {
+            { 0, 1, 0, 1, 0 },
+            { 0, 0, 1, 0, 0 },
+            { 0, 0, 0, 0, 0 }
         }
     }
 }
@@ -67,6 +81,13 @@ function GameManager:initialize()
     self.maxLives = 3
     self.lives = self.maxLives
     self.grid = nil
+    self.animals = shopAnimals
+
+    -- Shuffle the animals
+    for i = #self.animals, 2, -1 do
+        local j = math.random(i)
+        self.animals[i], self.animals[j] = self.animals[j], self.animals[i]
+    end
 end
 
 function GameManager:getInstance()
@@ -117,30 +138,29 @@ function GameManager:loadGrid()
     end
     if self.state == "shop" then
         -- shuffle the shop animals
-        local animals = {}
-        for _, animal in ipairs(shopAnimals) do
-            table.insert(animals, animal)
-        end
-        -- Shuffle the animals
-        for i = #animals, 2, -1 do
-            local j = math.random(i)
-            animals[i], animals[j] = animals[j], animals[i]
-        end
         for i = 1, 5 do
-            local animal = table.remove(animals)
+            local animal = table.remove(self.animals, 1)
             grid:add(i, 1, Card:new(animal))
+            -- Add the animal back to the end of the table
+            self.animals[#self.animals + 1] = animal
         end
     end
     if self.state == "game" then
         -- Load level data
         local level = levelData[self.currentLevel]
-        for _, data in ipairs(level.cards) do
-            local card = Card:new(data.name)
-            card.hp = data.hp
-            card.damage = data.damage
-            card.block = data.block
-            card.isEnemy = true
-            grid:add(data.x, data.y, card)
+        local board = level.board
+        local cards = level.cards
+        for i = 1, #board do
+            for j = 1, #board[i] do
+                if board[i][j] > 0 then
+                    local card = Card:new(cards[board[i][j]].name)
+                    card.hp = cards[board[i][j]].hp
+                    card.damage = cards[board[i][j]].damage
+                    card.block = cards[board[i][j]].block
+                    card.isEnemy = true
+                    grid:add(j, i, card)
+                end
+            end
         end
     end
     return grid

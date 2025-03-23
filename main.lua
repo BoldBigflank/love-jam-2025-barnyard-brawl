@@ -7,6 +7,8 @@ Game = require('scripts.game')
 require('scripts.constants')
 GameManager = require('scripts.game_manager')
 
+math.randomseed(os.time())
+
 Manager = roomy.new()
 
 font = love.graphics.setNewFont('assets/fonts/compass_9.ttf', 32)
