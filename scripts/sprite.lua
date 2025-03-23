@@ -71,6 +71,9 @@ function Sprite:setParent(parent)
 end
 
 function Sprite:update(dt)
+    if self.hidden then
+        return
+    end
     self.x = self.x + (self.speed * dt)
     self.rotation = self.rotation + (self.rotationSpeed * dt)
     if self.image and self.x > love.graphics.getWidth() then
@@ -84,6 +87,9 @@ function Sprite:update(dt)
 end
 
 function Sprite:render()
+    if self.hidden then
+        return
+    end
     love.graphics.push()
     if self.parent then
         local parentX, parentY = self.parent:globalPosition()
@@ -115,6 +121,10 @@ function Sprite:render()
         for _, child in ipairs(self.children) do
             child:render()
         end
+    elseif self.color then
+        love.graphics.setColor(self.color)
+        love.graphics.rectangle('fill', self.x, self.y, self.width, self.height)
+        love.graphics.setColor(1, 1, 1)
     end
 
     love.graphics.pop()
@@ -142,6 +152,8 @@ function Sprite:destroy()
     self.parent = nil
     self.image = nil
     self.children = nil
+    self.isDead = true
+    self.hidden = true
 end
 
 return Sprite

@@ -71,10 +71,11 @@ end
 function Grid:findClosestEnemyCard(card)
     local closestCard = nil
     local minDistance = math.huge
+    local i2, j2 = self:findCardPosition(card)
     for i = 1, self.columns do
         for j = 1, self.rows do
             if self.grid[i][j] and self.grid[i][j].isEnemy ~= card.isEnemy then
-                local distance = math.sqrt((card.x - i) ^ 2 + (card.y - j) ^ 2)
+                local distance = math.sqrt((i2 - i) ^ 2 + (j2 - j) ^ 2)
                 if distance < minDistance then
                     minDistance = distance
                     closestCard = self.grid[i][j]
@@ -252,7 +253,11 @@ function Grid:update(dt)
         for j = 1, self.rows do
             -- If the cell isn't empty, call update on it
             if self.grid[i][j] ~= nil then
-                self.grid[i][j]:update(dt)
+                if self.grid[i][j].isDead then
+                    self:remove(i, j)
+                else
+                    self.grid[i][j]:update(dt)
+                end
             end
         end
     end

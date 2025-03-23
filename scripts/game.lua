@@ -1,6 +1,8 @@
 Grid = require 'scripts.grid'
 Card = require 'scripts.card'
 Button = require 'scripts.button'
+Sprite = require 'scripts.sprite'
+Banner = require 'scripts.banner'
 GameManager = require 'scripts.game_manager'
 InfoBubble = require 'scripts.info_bubble'
 require('scripts.constants')
@@ -29,6 +31,8 @@ function Game:enter(previous, ...)
     end
     self.infoBubble = InfoBubble:new("Hello")
     table.insert(self.sprites, self.infoBubble)
+    self.banner = Banner:new()
+    table.insert(self.sprites, self.banner)
 end
 
 function Game:activeUpdate(dt)
@@ -37,7 +41,52 @@ function Game:activeUpdate(dt)
         return
     end
     -- Go through the grid and do move and attack
-    for _, card in pairs(grid:listCards()) do
+    local cards = grid:listCards()
+    -- Start Generation Here
+    local allCardsAreEnemies = true
+    local allCardsAreFriends = true
+    for _, card in pairs(cards) do
+        if not card.isEnemy then
+            allCardsAreEnemies = false
+        end
+        if card.isEnemy then
+            allCardsAreFriends = false
+        end
+    end
+
+    if allCardsAreEnemies then
+        GameManager:getInstance():changeState("failure")
+        self.banner.text = "You Lose!"
+        Flux.to(self.banner, 1, {
+            x = 0
+        })
+            :ease("quadout")
+            :after(self.banner, 1, {
+                x = -1 * love.graphics.getWidth()
+            }):ease("quadout")
+            :delay(1):oncomplete(function()
+            GameManager:getInstance():levelLost()
+            Manager:enter(Title)
+        end)
+        return
+    end
+    if allCardsAreFriends then
+        GameManager:getInstance():changeState("success")
+        self.banner.text = "You Win!"
+        Flux.to(self.banner, 1, {
+            x = 0
+        })
+            :ease("quadout")
+            :after(self.banner, 1, {
+                x = -1 * love.graphics.getWidth()
+            }):ease("quadout")
+            :delay(1):oncomplete(function()
+            GameManager:getInstance():levelWon()
+            Manager:enter(Plan)
+        end)
+        return
+    end
+    for i, card in pairs(cards) do
         local i, j = grid:findCardPosition(card)
         if not i or not j then
             return
@@ -47,7 +96,22 @@ function Game:activeUpdate(dt)
                 local enemy = grid:cardAtDirection(i, j, pos, card.direction)
                 if enemy then
                     if enemy.isEnemy ~= card.isEnemy then
-                        enemy:takeDamage(card.damage)
+                        local particle = Sprite:new()
+                        particle.x, particle.y = card:globalPosition()
+                        particle.width = 0.5 * CELL_SIZE
+                        particle.height = 0.5 * CELL_SIZE
+                        particle.color = COLOR_RED
+                        local enemyX, enemyY = enemy:globalPosition()
+                        local distance = math.abs(pos[1]) + math.abs(pos[2])
+                        Flux.to(particle, 0.3 * distance, {
+                            x = enemyX,
+                            y = enemyY
+                        }):ease("linear"):oncomplete(function()
+                            particle:destroy()
+                            enemy:takeDamage(card.damage)
+                        end)
+                        table.insert(self.sprites, particle)
+
                         card.attackCooldown = card.attackRate
                         break
                     end
@@ -62,11 +126,12 @@ function Game:activeUpdate(dt)
             if not enemyCard then
                 return
             end
-            enemyCardX, enemyCardY = grid:findCardPosition(enemyCard)
+            local enemyCardX, enemyCardY = grid:findCardPosition(enemyCard)
+            bestDistance = math.abs(i - enemyCardX) + math.abs(j - enemyCardY)
             for _, pos in ipairs(card.movePositions) do
                 local newX = i + pos[1]
                 local newY = j + pos[2]
-                if grid:validPosition(newX, newY) then
+                if grid:validPosition(newX, newY) and grid.grid[newX][newY] == nil then
                     local distance = math.abs(newX - enemyCardX) + math.abs(newY - enemyCardY)
                     if distance < bestDistance then
                         bestDistance = distance
@@ -84,9 +149,9 @@ function Game:update(dt)
     for _, sprite in pairs(self.sprites) do
         sprite:update(dt)
     end
-    for _, sprite in pairs(self.sprites) do
+    for i, sprite in pairs(self.sprites) do
         if sprite.isDead then
-            table.remove(self.sprites, sprite)
+            table.remove(self.sprites, i)
         end
     end
 
@@ -119,12 +184,6 @@ end
 function Game:leave(next, ...)
     for _, sprite in pairs(self.sprites) do
         sprite:destroy()
-    end
-end
-
-function Game:keypressed(key)
-    if key == 'escape' then
-        Manager:push(Title)
     end
 end
 

@@ -227,6 +227,7 @@ function Card:initialize(name)
     self.damageImage = getImage('assets/icons/sword_outline.png')
     self.blockImage = getImage('assets/icons/shield_outline.png')
     self.isEnemy = false
+    self.direction = 1
 end
 
 function Card:toObject()

@@ -61,8 +61,11 @@ function GameManager:initialize()
     self.gameInProgress = false
     self.state = "shop"
     self.currentLevel = 1
+    self.maxLevel = #levelData
     self.highScore = 0
     self.currentGold = 3
+    self.maxLives = 3
+    self.lives = self.maxLives
     self.grid = nil
 end
 
@@ -87,6 +90,16 @@ end
 
 function GameManager:saveGrid(grid)
     self.grid = grid:toObject()
+end
+
+function GameManager:levelWon()
+    self.currentLevel = self.currentLevel + 1
+    self.currentGold = self.currentGold + 3
+end
+
+function GameManager:levelLost()
+    self.lives = self.lives - 1
+    self.currentGold = self.currentGold + 2
 end
 
 function GameManager:loadGrid()
