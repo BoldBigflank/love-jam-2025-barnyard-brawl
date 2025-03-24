@@ -61,7 +61,7 @@ local farmCards = {
 local landCards = {
     { name = 'giraffe' },
     { name = 'bear' },
-    { name = 'hippo' },
+    { name = 'hippo',   block = 1 },
     { name = 'elephant' },
     { name = 'panda' },
     { name = 'zebra' },
