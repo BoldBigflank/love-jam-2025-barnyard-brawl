@@ -32,8 +32,21 @@ jobs:
           
       - name: Create Mac executable
         run: |
-          cat love-11.5-macos/love.app/Contents/MacOS/love barnyard-brawl.love > barnyard-brawl-mac
-          chmod +x barnyard-brawl-mac
+          # Copy love.app and rename it
+          cp -r love-11.5-macos/love.app barnyard-brawl.app
+          
+          # Copy .love file to Resources directory
+          cp barnyard-brawl.love barnyard-brawl.app/Contents/Resources/
+          
+          # Modify Info.plist
+          sed -i '' 's/org.love2d.love/com.bold-it.barnyard-brawl/g' barnyard-brawl.app/Contents/Info.plist
+          sed -i '' 's/LÖVE/Barnyard Brawl/g' barnyard-brawl.app/Contents/Info.plist
+          
+          # Remove UTExportedTypeDeclarations section
+          sed -i '' '/UTExportedTypeDeclarations/,/<\/dict>/d' barnyard-brawl.app/Contents/Info.plist
+          
+          # Create zip file with symlinks preserved
+          zip -y -r barnyard-brawl-mac.zip barnyard-brawl.app
           
       - name: Download Butler
         run: |
