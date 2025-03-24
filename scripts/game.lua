@@ -29,7 +29,7 @@ function Game:enter(previous, ...)
     button.onTouch = function()
         self.shopBubble.text = "Attack in progress!"
         GameManager:getInstance():changeState("game-active")
-
+        GameManager:getInstance():saveGrid(grid)
         grid.state = "action"
         button:destroy()
     end
@@ -37,7 +37,7 @@ function Game:enter(previous, ...)
     table.insert(self.sprites, self.infoBubble)
     self.banner = Banner:new()
     table.insert(self.sprites, self.banner)
-    self.shopBubble = InfoBubble:new("Arrange your animals to attack this gang.")
+    self.shopBubble = InfoBubble:new("Plan your attack by arranging your animals.")
     self.shopBubble.width = 200
     self.shopBubble.x = love.graphics.getWidth() - self.shopBubble.width - 20
     self.shopBubble.y = 20

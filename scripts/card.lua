@@ -167,7 +167,7 @@ function Card:initialize(name)
     local attackRate = animalStats[6]
     local moveRate = animalStats[7]
 
-    local imagePath = 'assets/Square (outline)/' .. name .. '.png'
+    local imagePath = 'assets/Round (outline)/' .. name .. '.png'
     Sprite.initialize(self, imagePath)
     self.dragging = {
         diffX = 0,
