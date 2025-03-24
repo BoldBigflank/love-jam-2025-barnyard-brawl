@@ -18,8 +18,8 @@ jobs:
           
       - name: Download LÖVE
         run: |
-          wget https://github.com/love2d/love/releases/download/11.5/love-11.5-win64.zip
-          wget https://github.com/love2d/love/releases/download/11.5/love-11.5-macos.zip
+          curl -L -o love-11.5-win64.zip https://github.com/love2d/love/releases/download/11.5/love-11.5-win64.zip
+          curl -L -o love-11.5-macos.zip https://github.com/love2d/love/releases/download/11.5/love-11.5-macos.zip
           
       - name: Extract LÖVE
         run: |
@@ -55,7 +55,7 @@ jobs:
           chmod +x butler
       - name: Push to itch.io
         env:
-          ITCHIO_API_KEY: ${{ secrets.ITCHIO_API_KEY }}
+          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
           VERSION: ${{ github.run_number }}
         run: |
           ./butler push barnyard-brawl.exe ${{ secrets.ITCH_USER }}/${{ secrets.ITCH_GAME }}:windows --userversion ${{ env.VERSION }}
