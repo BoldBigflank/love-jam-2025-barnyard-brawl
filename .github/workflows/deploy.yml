@@ -33,7 +33,7 @@ jobs:
       - name: Create Mac executable
         run: |
           # Copy love.app and rename it
-          cp -r love-11.5-macos/love.app barnyard-brawl.app
+          cp -r love.app barnyard-brawl.app
           
           # Copy .love file to Resources directory
           cp barnyard-brawl.love barnyard-brawl.app/Contents/Resources/
