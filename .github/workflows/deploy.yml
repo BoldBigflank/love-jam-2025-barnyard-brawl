@@ -19,23 +19,16 @@ jobs:
       - name: Download LÖVE
         run: |
           wget https://github.com/love2d/love/releases/download/11.5/love-11.5-win64.zip
-          wget https://github.com/love2d/love/releases/download/11.5/love-11.5-linux-src.tar.gz
           wget https://github.com/love2d/love/releases/download/11.5/love-11.5-macos.zip
           
       - name: Extract LÖVE
         run: |
           unzip love-11.5-win64.zip
-          tar xf love-11.5-linux-src.tar.gz
           unzip love-11.5-macos.zip
           
       - name: Create Windows executable
         run: |
           cat love-11.5-win64/love.exe barnyard-brawl.love > barnyard-brawl.exe
-          
-      - name: Create Linux executable
-        run: |
-          cat love-11.5-linux-src/love barnyard-brawl.love > barnyard-brawl
-          chmod +x barnyard-brawl
           
       - name: Create Mac executable
         run: |
@@ -54,6 +47,6 @@ jobs:
           VERSION: ${{ github.run_number }}
         run: |
           ./butler.exe push barnyard-brawl.exe ${{ secrets.ITCH_USER }}/${{ secrets.ITCH_GAME }}:windows --userversion ${{ env.VERSION }}
-          ./butler.exe push barnyard-brawl ${{ secrets.ITCH_USER }}/${{ secrets.ITCH_GAME }}:linux --userversion ${{ env.VERSION }}
+          ./butler.exe push barnyard-brawl.love ${{ secrets.ITCH_USER }}/${{ secrets.ITCH_GAME }}:linux --userversion ${{ env.VERSION }}
           ./butler.exe push barnyard-brawl-mac ${{ secrets.ITCH_USER }}/${{ secrets.ITCH_GAME }}:mac --userversion ${{ env.VERSION }}
 
