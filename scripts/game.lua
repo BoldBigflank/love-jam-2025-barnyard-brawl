@@ -105,17 +105,23 @@ function Game:activeUpdate(dt)
                 local enemy = grid:cardAtDirection(i, j, pos, card.direction)
                 if enemy then
                     if enemy.isEnemy ~= card.isEnemy then
-                        local particle = Sprite:new()
+                        local path = card.isEnemy and "assets/puzzle/ballBlue_07.png" or
+                            "assets/puzzle/ballYellow_07.png"
+                        local particle = Sprite:new(path)
+                        particle.width = card.damage * 8 + 8
+                        particle.height = card.damage * 8 + 8
                         particle.x, particle.y = card:globalPosition()
-                        particle.width = 0.5 * CELL_SIZE
-                        particle.height = 0.5 * CELL_SIZE
+                        particle.x = particle.x + 0.5 * CARD_WIDTH - 0.5 * particle.width
+                        particle.y = particle.y + 0.5 * CARD_HEIGHT - 0.5 * particle.height
                         particle.color = COLOR_RED
                         local enemyX, enemyY = enemy:globalPosition()
+                        enemyX = enemyX + 0.5 * CARD_WIDTH - 0.5 * particle.width
+                        enemyY = enemyY + 0.5 * CARD_HEIGHT - 0.5 * particle.height
                         local distance = math.abs(pos[1]) + math.abs(pos[2])
                         Flux.to(particle, 0.3 * distance, {
                             x = enemyX,
                             y = enemyY
-                        }):ease("linear"):oncomplete(function()
+                        }):ease("sineout"):oncomplete(function()
                             particle:destroy()
                             if enemy:takeDamage(card.damage) then
                                 self.actionTimer = 0
