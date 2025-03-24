@@ -4,6 +4,22 @@ require('scripts.constants')
 getImage = require 'scripts.images'
 local Title = {}
 
+function colorLerp(color1, color2, t)
+    return {
+        color1[1] + (color2[1] - color1[1]) * t,
+        color1[2] + (color2[2] - color1[2]) * t,
+        color1[3] + (color2[3] - color1[3]) * t
+    }
+end
+
+local rainbowColors = {
+    { 1, 0, 0 },
+    { 1, 1, 0 },
+    { 0, 1, 0 },
+    { 0, 1, 1 },
+    { 0, 0, 1 },
+}
+
 function Title:enter(previous, ...)
     local gm = GameManager:getInstance()
     self.abandonButton = Button:new('Abandon Run')
@@ -52,6 +68,13 @@ function Title:update(dt)
 end
 
 function Title:draw()
+    local time = love.timer.getTime()
+    local rainbowColor = {
+        (math.sin(time * 2 + 0) + 1) / 2,
+        (math.sin(time * 2 + 2) + 1) / 2,
+        (math.sin(time * 2 + 4) + 1) / 2
+    }
+
     local screenWidth = love.graphics.getWidth()
     local screenHeight = love.graphics.getHeight()
     -- Title
@@ -59,7 +82,7 @@ function Title:draw()
     self.abandonButton:render()
     local gm = GameManager:getInstance()
     if gm.gameInProgress then
-        love.graphics.setColor(1, 1, 1)
+        love.graphics.setColor(rainbowColor)
         love.graphics.printf("Barnyard Brawl", 0, 32, screenWidth, 'center')
         love.graphics.setColor(COLOR_WHITE)
         -- Lives left
@@ -98,7 +121,7 @@ function Title:draw()
         end
     else
         -- Initial load
-        love.graphics.setColor(COLOR_WHITE)
+        love.graphics.setColor(rainbowColor)
         love.graphics.printf("Barnyard Brawl", Font_96, 0, 32, screenWidth, 'center')
         love.graphics.printf("By Alex Swan", Font_32, 0, 148, screenWidth, 'center')
         love.graphics.printf("For LÖVE Jam 2025", Font_32, 0, 196, screenWidth, 'center')
@@ -106,9 +129,7 @@ function Title:draw()
     -- Game Over line
     if gm.lives <= 0 then
         love.graphics.printf("Game Over", 0, 244 + 64, screenWidth, 'center')
-    end
-    -- Win line
-    if gm.gameInProgress and gm.currentLevel > gm.maxLevel then
+    elseif gm.gameInProgress and gm.currentLevel > gm.maxLevel then
         love.graphics.printf("You Win!", 0, 244 + 64, screenWidth, 'center')
     end
 end

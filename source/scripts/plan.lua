@@ -69,7 +69,13 @@ function Plan:update(dt)
 end
 
 function Plan:draw()
-    love.graphics.setColor(1, 1, 1)
+    local time = love.timer.getTime()
+    local rainbowColor = {
+        (math.sin(time * 2 + 0) + 1) / 2,
+        (math.sin(time * 2 + 2) + 1) / 2,
+        (math.sin(time * 2 + 4) + 1) / 2
+    }
+    love.graphics.setColor(rainbowColor)
     love.graphics.printf("Shop Phase", 0, 16, love.graphics.getWidth(), 'center')
     love.graphics.setColor(1, 1, 1)
     local screenWidth = love.graphics.getWidth()

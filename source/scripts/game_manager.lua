@@ -48,14 +48,14 @@ local treeCards = {
     { name = 'monkey' },
     { name = 'sloth' },
     { name = 'snake' },
-    { name = 'gorilla', block = 3 }
+    { name = 'gorilla', block = 2 }
 }
 local farmCards = {
     { name = 'cow' },
     { name = 'pig' },
     { name = 'horse' },
     { name = 'goat' },
-    { name = 'dog',  block = 3 }
+    { name = 'dog',  block = 2 }
 }
 
 local landCards = {
@@ -67,7 +67,7 @@ local landCards = {
     { name = 'zebra' },
     { name = 'moose' },
     { name = 'buffalo' },
-    { name = 'rhino',   block = 3 }
+    { name = 'rhino',   block = 2 }
 }
 
 local waterCards = {
@@ -90,9 +90,9 @@ local levelData = {
     [2] = {
         cards = landCards,
         board = {
-            { 2, 1, 0, 1, 2 },
-            { 0, 0, 3, 0, 0 },
-            { 0, 0, 2, 0, 0 }
+            { 0, 0, 0, 0, 3 },
+            { 0, 2, 0, 0, 0 },
+            { 1, 0, 0, 0, 0 }
         }
     },
     [3] = {

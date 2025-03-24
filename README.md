@@ -1,4 +1,4 @@
-# Love Jam
+# Barnyard Brawl
 
 ## Game Plan
 * Intro screen

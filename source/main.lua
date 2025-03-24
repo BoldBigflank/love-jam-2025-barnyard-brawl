@@ -21,4 +21,4 @@ function love.update(dt)
     Flux.update(dt)
 end
 
-love.window.setTitle('Love Jam')
+love.window.setTitle('Barnyard Brawl')

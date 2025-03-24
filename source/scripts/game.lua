@@ -191,8 +191,15 @@ function Game:update(dt)
 end
 
 function Game:draw()
-    love.graphics.setColor(1, 1, 1)
+    local time = love.timer.getTime()
+    local rainbowColor = {
+        (math.sin(time * 2 + 0) + 1) / 2,
+        (math.sin(time * 2 + 2) + 1) / 2,
+        (math.sin(time * 2 + 4) + 1) / 2
+    }
+    love.graphics.setColor(rainbowColor)
     love.graphics.printf("Game Phase", 0, 16, love.graphics.getWidth(), 'center')
+    love.graphics.setColor(1, 1, 1)
     for _, sprite in pairs(self.sprites) do
         sprite:render()
     end
