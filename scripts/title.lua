@@ -41,7 +41,6 @@ function Title:enter(previous, ...)
     end
     if gm.gameInProgress then
     end
-    --button:new(code, text, x, y, textColor, font, color)
     self.winImage = getImage('assets/icons/award.png')
     self.lossImage = getImage('assets/icons/skull.png')
     self.pendingImage = getImage('assets/icons/rhombus_outline.png')
@@ -106,10 +105,6 @@ function Title:draw()
     if gm.gameInProgress and gm.currentLevel > gm.maxLevel then
         love.graphics.printf("You Win!", 0, 244 + 64, screenWidth, 'center')
     end
-end
-
-function Title:leave(next, ...)
-    print('title leave')
 end
 
 return Title

@@ -48,15 +48,16 @@ end
 function Game:roundOver(levelWon)
     GameManager:getInstance():changeState(levelWon and "success" or "failure")
     self.banner.text = levelWon and "You Win!" or "You Lose!"
+    self.banner.levelWon = levelWon
     self.shopBubble.text = levelWon and "Attack successful!" or "Attack failed!"
-    Flux.to(self.banner, 1, {
+    Flux.to(self.banner, 0.5, {
         x = 0
     })
         :ease("quadout")
-        :after(self.banner, 1, {
-            x = -1 * love.graphics.getWidth()
-        }):ease("quadout")
-        :delay(1):oncomplete(function()
+        :after(self.banner, 0.7, {
+            y = levelWon and -1 * self.banner.height or love.graphics.getHeight()
+        }):ease("quadin")
+        :delay(0.7):oncomplete(function()
         GameManager:getInstance():levelCompleted(levelWon)
         Manager:enter(Title)
     end)

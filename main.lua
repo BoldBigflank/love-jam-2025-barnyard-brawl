@@ -11,10 +11,7 @@ math.randomseed(os.time())
 
 Manager = roomy.new()
 
-font = love.graphics.setNewFont('assets/fonts/compass_9.ttf', 32)
-
 function love.load()
-    print('love.load')
     love.mouse.setCursor(CURSOR_HAND)
     Manager:hook({})
     Manager:enter(Title)

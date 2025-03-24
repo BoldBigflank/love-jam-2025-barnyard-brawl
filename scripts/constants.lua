@@ -53,3 +53,7 @@ COLOR_RED_BUTTON = {
     fill = COLOR_RED,
     border = COLOR_BUTTON_RED_BORDER,
 }
+
+-- Fonts
+Font_32 = love.graphics.setNewFont('assets/fonts/compass_9.ttf', 32)
+Font_96 = love.graphics.setNewFont('assets/fonts/compass_9.ttf', 96)

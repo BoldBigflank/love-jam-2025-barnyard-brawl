@@ -11,13 +11,25 @@ function Banner:initialize()
     self.height = 0.25 * love.graphics.getHeight()
     self.color = COLOR_WHITE
     self.text = ""
+    self.font = Font_96
+    self.levelWon = false
 end
 
 function Banner:render()
-    love.graphics.setColor(self.color)
+    local color = self.levelWon and COLOR_BLUE_BUTTON or COLOR_RED_BUTTON
+    love.graphics.setColor(color.border)
     love.graphics.rectangle('fill', self.x, self.y, self.width, self.height)
+
+    love.graphics.setColor(color.innerBorder)
+    love.graphics.rectangle('fill', self.x, self.y + 16, self.width, self.height - 32)
+
+
+    love.graphics.setColor(color.fill)
+    love.graphics.rectangle('fill', self.x, self.y + 32, self.width, self.height - 64)
+
     love.graphics.setColor(COLOR_BLACK)
-    love.graphics.print(self.text, self.x, self.y)
+    love.graphics.printf(self.text, self.font, self.x, self.y + 0.5 * self.height - 0.5 * self.font:getHeight(self.text),
+        self.width, 'center')
 end
 
 return Banner

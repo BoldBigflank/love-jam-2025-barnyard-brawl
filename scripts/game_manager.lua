@@ -204,7 +204,7 @@ function GameManager:reset()
     self.gameInProgress = false
     self.state = "intro"
     self.currentLevel = 1
-    self.maxLevel = 2 -- #levelData
+    self.maxLevel = #levelData
     self.highScore = 0
     self.currentGold = 3
     self.lives = self.maxLives
