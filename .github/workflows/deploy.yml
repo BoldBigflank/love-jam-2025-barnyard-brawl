@@ -58,7 +58,7 @@ jobs:
           ITCHIO_API_KEY: ${{ secrets.ITCHIO_API_KEY }}
           VERSION: ${{ github.run_number }}
         run: |
-          ./butler.exe push barnyard-brawl.exe ${{ secrets.ITCH_USER }}/${{ secrets.ITCH_GAME }}:windows --userversion ${{ env.VERSION }}
-          ./butler.exe push barnyard-brawl.love ${{ secrets.ITCH_USER }}/${{ secrets.ITCH_GAME }}:linux --userversion ${{ env.VERSION }}
-          ./butler.exe push barnyard-brawl-mac ${{ secrets.ITCH_USER }}/${{ secrets.ITCH_GAME }}:mac --userversion ${{ env.VERSION }}
+          ./butler push barnyard-brawl.exe ${{ secrets.ITCH_USER }}/${{ secrets.ITCH_GAME }}:windows --userversion ${{ env.VERSION }}
+          ./butler push barnyard-brawl.love ${{ secrets.ITCH_USER }}/${{ secrets.ITCH_GAME }}:linux --userversion ${{ env.VERSION }}
+          ./butler push barnyard-brawl-mac.zip ${{ secrets.ITCH_USER }}/${{ secrets.ITCH_GAME }}:mac --userversion ${{ env.VERSION }}
 
