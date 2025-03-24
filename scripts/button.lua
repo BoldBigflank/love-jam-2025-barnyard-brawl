@@ -40,7 +40,9 @@ function Button:update(dt)
 end
 
 function Button:render()
-    -- Sprite.draw(self)
+    if self.text == "" then
+        return
+    end
 
     local buttonX = self.pressed and self.x + 4 or self.x
     local buttonY = self.pressed and self.y + 4 or self.y

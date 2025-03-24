@@ -60,10 +60,10 @@ local farmCards = {
 
 local landCards = {
     { name = 'giraffe' },
-    { name = 'elephant' },
-    { name = 'hippo' },
-    { name = 'panda' },
     { name = 'bear' },
+    { name = 'hippo' },
+    { name = 'elephant' },
+    { name = 'panda' },
     { name = 'zebra' },
     { name = 'moose' },
     { name = 'buffalo' },
@@ -188,7 +188,6 @@ function GameManager:initialize()
     self.gameInProgress = false
     self.state = "intro"
     self.currentLevel = 1
-    self.maxLevel = #levelData
     self.highScore = 0
     self.currentGold = 3
     self.maxLives = 3
@@ -205,7 +204,7 @@ function GameManager:reset()
     self.gameInProgress = false
     self.state = "intro"
     self.currentLevel = 1
-    self.maxLevel = #levelData
+    self.maxLevel = 2 -- #levelData
     self.highScore = 0
     self.currentGold = 3
     self.lives = self.maxLives
@@ -260,6 +259,14 @@ function GameManager:levelLost()
     self.lastOutcome = 'Lost and earned 2 gold.'
     self.outcomes[self.currentLevel] = "Loss"
     self.currentLevel = self.currentLevel + 1
+end
+
+function GameManager:levelCompleted(levelWon)
+    if levelWon then
+        self:levelWon()
+    else
+        self:levelLost()
+    end
 end
 
 function GameManager:loadGrid()

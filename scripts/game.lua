@@ -57,7 +57,7 @@ function Game:roundOver(levelWon)
             x = -1 * love.graphics.getWidth()
         }):ease("quadout")
         :delay(1):oncomplete(function()
-        GameManager:getInstance():levelLost()
+        GameManager:getInstance():levelCompleted(levelWon)
         Manager:enter(Title)
     end)
 end

@@ -10,7 +10,7 @@ Card.currentlyDragged = nil
 
 -- price, hp, block, damage, damageMultiplier, attackRate, moveRate
 local animalNumbers = {
-    --                price,  hp, block,  damage, damageMultiplier,   attackRate, moveRate
+    --       price,  hp, block,  damage, damageMultiplier,   attackRate, moveRate
     -- air tier 1
     ['chick'] = { 1, 4, 0, 1, 1, 0.5, 0.5 },
     ['duck'] = { 1, 5, 0, 1, 1, 0.5, 0.8 },
@@ -31,7 +31,6 @@ local animalNumbers = {
 
     -- land tier 1
     ['giraffe'] = { 2, 4, 0, 4, 1, 2, 1 },
-    ['elephant'] = { 1, 4, 2, 4, 1, 4, 1 },
     ['horse'] = { 1, 4, 0, 2, 1, 1, 1 },
     ['hippo'] = { 1, 14, 2, 1, 1, 1, 1 },
     ['goat'] = { 1, 7, 0, 2, 1, 1, 1 },
@@ -40,8 +39,9 @@ local animalNumbers = {
     ['panda'] = { 2, 7, 0, 4, 1, 3, 1 },
     ['pig'] = { 3, 7, 0, 2, 1, 1, 1 },
     ['rabbit'] = { 3, 4, 0, 1, 1, 1, 1 },
-    -- land tier 2
     ['bear'] = { 3, 10, 0, 3, 1, 1, 1 },
+    -- land tier 2
+    ['elephant'] = { 3, 4, 1, 4, 1, 4, 1 },
     ['zebra'] = { 4, 10, 0, 3, 1, 1, 1 },
     ['moose'] = { 4, 10, 0, 6, 1, 2, 1 },
     ['buffalo'] = { 5, 10, 0, 5, 1, 1.66, 1 },

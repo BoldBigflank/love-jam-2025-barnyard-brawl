@@ -6,31 +6,40 @@ local Title = {}
 
 function Title:enter(previous, ...)
     local gm = GameManager:getInstance()
+    self.abandonButton = Button:new('Abandon Run')
+    self.abandonButton.color = 'red'
+    self.abandonButton.x = 0.5 * love.graphics.getWidth() - 0.5 * self.abandonButton.width
+    self.abandonButton.y = 0.85 * love.graphics.getHeight() - 0.5 * self.abandonButton.height
+    self.abandonButton.onTouch = function()
+        gm:reset()
+        Manager:enter(Title)
+    end
+    if not gm.gameInProgress then
+        self.abandonButton.text = ""
+    end
     local buttonText = gm.gameInProgress and 'Continue' or 'New Game'
+    if gm.currentLevel > gm.maxLevel then
+        buttonText = 'New Game'
+        self.abandonButton.text = ""
+    end
     if gm.lives <= 0 then
         buttonText = 'New Game'
+        self.abandonButton.text = ""
     end
     self.button = Button:new(buttonText)
     self.button.x = 0.5 * love.graphics.getWidth() - 0.5 * self.button.width
     self.button.y = 0.75 * love.graphics.getHeight() - 0.5 * self.button.height
     self.button.onTouch = function()
         local gm = GameManager:getInstance()
-        print(gm.gameInProgress)
         if gm.lives <= 0 then
-            print('reset')
+            gm:reset()
+        end
+        if gm.currentLevel > gm.maxLevel then
             gm:reset()
         end
         Manager:enter(Plan)
     end
     if gm.gameInProgress then
-        self.abandonButton = Button:new('Abandon Run')
-        self.abandonButton.color = 'red'
-        self.abandonButton.x = 0.5 * love.graphics.getWidth() - 0.5 * self.abandonButton.width
-        self.abandonButton.y = 0.85 * love.graphics.getHeight() - 0.5 * self.abandonButton.height
-        self.abandonButton.onTouch = function()
-            gm:reset()
-            Manager:enter(Title)
-        end
     end
     --button:new(code, text, x, y, textColor, font, color)
     self.winImage = getImage('assets/icons/award.png')
@@ -40,9 +49,7 @@ end
 
 function Title:update(dt)
     self.button:update(dt)
-    if self.abandonButton then
-        self.abandonButton:update(dt)
-    end
+    self.abandonButton:update(dt)
 end
 
 function Title:draw()
@@ -52,9 +59,7 @@ function Title:draw()
     love.graphics.setColor(1, 1, 1)
     love.graphics.printf("Barnyard Brawl", 0, 32, screenWidth, 'center')
     self.button:render()
-    if self.abandonButton then
-        self.abandonButton:render()
-    end
+    self.abandonButton:render()
     local gm = GameManager:getInstance()
     if gm.gameInProgress then
         love.graphics.setColor(COLOR_WHITE)
@@ -96,6 +101,10 @@ function Title:draw()
     -- Game Over line
     if gm.lives <= 0 then
         love.graphics.printf("Game Over", 0, 244 + 64, screenWidth, 'center')
+    end
+    -- Win line
+    if gm.gameInProgress and gm.currentLevel > gm.maxLevel then
+        love.graphics.printf("You Win!", 0, 244 + 64, screenWidth, 'center')
     end
 end
 
