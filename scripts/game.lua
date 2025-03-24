@@ -45,12 +45,28 @@ function Game:enter(previous, ...)
     self.actionTimer = 0
 end
 
+function Game:roundOver(levelWon)
+    GameManager:getInstance():changeState(levelWon and "success" or "failure")
+    self.banner.text = levelWon and "You Win!" or "You Lose!"
+    self.shopBubble.text = levelWon and "Attack successful!" or "Attack failed!"
+    Flux.to(self.banner, 1, {
+        x = 0
+    })
+        :ease("quadout")
+        :after(self.banner, 1, {
+            x = -1 * love.graphics.getWidth()
+        }):ease("quadout")
+        :delay(1):oncomplete(function()
+        GameManager:getInstance():levelLost()
+        Manager:enter(Title)
+    end)
+end
+
 function Game:activeUpdate(dt)
     self.actionTimer = self.actionTimer + dt
     if self.actionTimer > 10 then
-        GameManager:getInstance():changeState("failure")
-        self.banner.text = "You Lose!"
-        self.shopBubble.text = "Attack failed!"
+        self:roundOver(false)
+        return
     end
     local grid = Sprite.findByName(self.sprites, "Grid")
     if not grid then
@@ -71,37 +87,11 @@ function Game:activeUpdate(dt)
     end
 
     if allCardsAreEnemies then
-        GameManager:getInstance():changeState("failure")
-        self.banner.text = "You Lose!"
-        self.shopBubble.text = "Attack failed!"
-        Flux.to(self.banner, 1, {
-            x = 0
-        })
-            :ease("quadout")
-            :after(self.banner, 1, {
-                x = -1 * love.graphics.getWidth()
-            }):ease("quadout")
-            :delay(1):oncomplete(function()
-            GameManager:getInstance():levelLost()
-            Manager:enter(Title)
-        end)
+        self:roundOver(false)
         return
     end
     if allCardsAreFriends then
-        GameManager:getInstance():changeState("success")
-        self.banner.text = "You Win!"
-        self.shopBubble.text = "Attack successful!"
-        Flux.to(self.banner, 1, {
-            x = 0
-        })
-            :ease("quadout")
-            :after(self.banner, 1, {
-                x = -1 * love.graphics.getWidth()
-            }):ease("quadout")
-            :delay(1):oncomplete(function()
-            GameManager:getInstance():levelWon()
-            Manager:enter(Title)
-        end)
+        self:roundOver(true)
         return
     end
     for i, card in pairs(cards) do
