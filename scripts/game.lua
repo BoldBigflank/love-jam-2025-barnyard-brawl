@@ -26,6 +26,7 @@ function Game:enter(previous, ...)
     button.y = love.graphics.getHeight() - button.height - 20
     table.insert(self.sprites, button)
     button.onTouch = function()
+        self.shopBubble.text = "Attack in progress!"
         GameManager:getInstance():changeState("game-active")
         button:destroy()
     end
@@ -33,6 +34,11 @@ function Game:enter(previous, ...)
     table.insert(self.sprites, self.infoBubble)
     self.banner = Banner:new()
     table.insert(self.sprites, self.banner)
+    self.shopBubble = InfoBubble:new("Arrange your animals to attack this gang.")
+    self.shopBubble.width = 200
+    self.shopBubble.x = love.graphics.getWidth() - self.shopBubble.width - 20
+    self.shopBubble.y = 20
+    table.insert(self.sprites, self.shopBubble)
 end
 
 function Game:activeUpdate(dt)
@@ -57,6 +63,7 @@ function Game:activeUpdate(dt)
     if allCardsAreEnemies then
         GameManager:getInstance():changeState("failure")
         self.banner.text = "You Lose!"
+        self.shopBubble.text = "Attack failed!"
         Flux.to(self.banner, 1, {
             x = 0
         })
@@ -73,6 +80,7 @@ function Game:activeUpdate(dt)
     if allCardsAreFriends then
         GameManager:getInstance():changeState("success")
         self.banner.text = "You Win!"
+        self.shopBubble.text = "Attack successful!"
         Flux.to(self.banner, 1, {
             x = 0
         })
@@ -82,7 +90,7 @@ function Game:activeUpdate(dt)
             }):ease("quadout")
             :delay(1):oncomplete(function()
             GameManager:getInstance():levelWon()
-            Manager:enter(Plan)
+            Manager:enter(Title)
         end)
         return
     end

@@ -17,7 +17,7 @@ function love.load()
     print('love.load')
     love.mouse.setCursor(CURSOR_HAND)
     Manager:hook({})
-    Manager:push(Title)
+    Manager:enter(Title)
 end
 
 function love.update(dt)

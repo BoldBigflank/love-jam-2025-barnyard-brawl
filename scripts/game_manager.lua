@@ -186,7 +186,7 @@ local levelData = {
 }
 function GameManager:initialize()
     self.gameInProgress = false
-    self.state = "shop"
+    self.state = "intro"
     self.currentLevel = 1
     self.maxLevel = #levelData
     self.highScore = 0
@@ -195,7 +195,27 @@ function GameManager:initialize()
     self.lives = self.maxLives
     self.grid = nil
     self.animals = shopAnimals
+    self.lastOutcome = ""
+    self.outcomes = {}
 
+    self:reset()
+end
+
+function GameManager:reset()
+    self.gameInProgress = false
+    self.state = "intro"
+    self.currentLevel = 1
+    self.maxLevel = #levelData
+    self.highScore = 0
+    self.currentGold = 3
+    self.lives = self.maxLives
+    self.grid = nil
+    self.animals = shopAnimals
+    self.lastOutcome = ""
+    self.outcomes = {}
+    for i = 1, self.maxLevel do
+        self.outcomes[i] = "Pending"
+    end
     -- Shuffle the animals
     for i = #self.animals, 2, -1 do
         local j = math.random(i)
@@ -227,16 +247,23 @@ function GameManager:saveGrid(grid)
 end
 
 function GameManager:levelWon()
+    self.currentGold = self.currentGold + 5
+    self.lastOutcome = 'Won and earned 5 gold.'
+    self.outcomes[self.currentLevel] = "Win"
+
     self.currentLevel = self.currentLevel + 1
-    self.currentGold = self.currentGold + 3
 end
 
 function GameManager:levelLost()
     self.lives = self.lives - 1
     self.currentGold = self.currentGold + 2
+    self.lastOutcome = 'Lost and earned 2 gold.'
+    self.outcomes[self.currentLevel] = "Loss"
+    self.currentLevel = self.currentLevel + 1
 end
 
 function GameManager:loadGrid()
+    self.gameInProgress = true
     local grid = nil
     if self.grid then
         grid = Grid.fromObject(self.grid)

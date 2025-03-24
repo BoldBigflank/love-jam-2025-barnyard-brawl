@@ -64,6 +64,7 @@ function Button:render()
 
     love.graphics.setColor(self.hovered and COLOR_BLACK or COLOR_WHITE)
     love.graphics.printf(self.text, buttonX, buttonY + 10, self.width, 'center')
+    love.graphics.setColor(1, 1, 1)
 end
 
 return Button

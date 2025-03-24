@@ -12,49 +12,49 @@ Card.currentlyDragged = nil
 local animalNumbers = {
     --                price,  hp, block,  damage, damageMultiplier,   attackRate, moveRate
     -- air tier 1
-    ['chick'] =     { 1,      4,  0,      1,      1,                  0.5,          0.5 },
-    ['duck'] =      { 1,      5,  0,      1,      1,                  0.5,          0.8 },
-    ['parrot'] =    { 1,      5,  0,      1,      1,                  0.5,          0.6 },
-    ['penguin'] =   { 2,      6,  1,      1,      1,                  0.5,          0.4 },
+    ['chick'] = { 1, 4, 0, 1, 1, 0.5, 0.5 },
+    ['duck'] = { 1, 5, 0, 1, 1, 0.5, 0.8 },
+    ['parrot'] = { 2, 5, 0, 1, 1, 0.5, 0.6 },
+    ['penguin'] = { 3, 6, 1, 1, 1, 0.5, 0.4 },
     -- air tier 2
-    ['chicken'] =   { 3,      11, 1,      3,      1,                  0.4,          0.7 },
-    ['owl'] =       { 3,      11, 2,      3,      1,                  0.4,          0.4 },
+    ['chicken'] = { 5, 11, 1, 3, 1, 0.4, 0.7 },
+    ['owl'] = { 6, 11, 2, 3, 1, 0.4, 0.4 },
     --air tier 3
 
     -- tree tier 1
-    ['monkey'] =    { 1,      6,  0,      1,      1,                  0.33,          1 },
-    ['sloth'] =     { 1,      6,  1,      3,      1,                  3,          3 },
-    ['snake'] =     { 2,      4,  0,      2,      1,                  0.5,          1 },
+    ['monkey'] = { 1, 6, 0, 1, 1, 0.43, 1 },
+    ['sloth'] = { 2, 6, 1, 3, 1, 0.43, 0.43 },
+    ['snake'] = { 4, 4, 0, 2, 1, 0.5, 1 },
     -- tree tier 2
-    ['gorilla'] =   { 3,      11, 2,      6,      1,                  0.8,          1 },
+    ['gorilla'] = { 6, 11, 2, 6, 1, 0.8, 1 },
 
 
     -- land tier 1
-    ['giraffe'] =   { 1,      4,  0,      1,      1,                  1,          1 },
-    ['elephant'] =  { 1,      4,  0,      1,      1,                  1,          1 },
-    ['horse'] =     { 1,      4,  0,      1,      1,                  1,          1 },
-    ['hippo'] =     { 1,      4,  0,      1,      1,                  1,          1 },
-    ['goat'] =      { 1,      4,  0,      1,      1,                  1,          1 },
-    ['dog'] =       { 1,      4,  0,      1,      1,                  1,          1 },
-    ['cow'] =       { 1,      4,  0,      1,      1,                  1,          1 },
-    ['panda'] =     { 1,      4,  0,      1,      1,                  1,          1 },
-    ['pig'] =       { 1,      4,  0,      1,      1,                  1,          1 },
-    ['rabbit'] =    { 1,      4,  0,      1,      1,                  1,          1 },
+    ['giraffe'] = { 1, 4, 0, 1, 1, 1, 1 },
+    ['elephant'] = { 1, 4, 0, 1, 1, 1, 1 },
+    ['horse'] = { 1, 4, 0, 1, 1, 1, 1 },
+    ['hippo'] = { 1, 4, 0, 1, 1, 1, 1 },
+    ['goat'] = { 1, 4, 0, 1, 1, 1, 1 },
+    ['dog'] = { 2, 4, 0, 1, 1, 1, 1 },
+    ['cow'] = { 2, 4, 0, 1, 1, 1, 1 },
+    ['panda'] = { 2, 4, 0, 1, 1, 1, 1 },
+    ['pig'] = { 3, 4, 0, 1, 1, 1, 1 },
+    ['rabbit'] = { 3, 4, 0, 1, 1, 1, 1 },
     -- land tier 2
-    ['bear'] =      { 3,      10, 0,      3,      1,                  1,          1 },
-    ['zebra'] =     { 3,      10, 0,      3,      1,                  1,          1 },
-    ['moose'] =     { 3,      10, 0,      3,      1,                  1,          1 },
-    ['buffalo'] =   { 3,      10, 0,      3,      1,                  1,          1 },
-    ['rhino'] =     { 3,      10, 0,      3,      1,                  1,          1 },
+    ['bear'] = { 3, 10, 0, 3, 1, 1, 1 },
+    ['zebra'] = { 4, 10, 0, 3, 1, 1, 1 },
+    ['moose'] = { 4, 10, 0, 3, 1, 1, 1 },
+    ['buffalo'] = { 5, 10, 0, 3, 1, 1, 1 },
+    ['rhino'] = { 5, 10, 0, 3, 1, 1, 1 },
     -- land tier 3
 
     -- water tier 1
-    ['crocodile'] = { 1,      4,  0,      1,      1,                  1,          1 },
-    ['frog'] =      { 1,      4,  0,      1,      1,                  1,          1 },
-    ['walrus'] =    { 1,      4,  0,      1,      1,                  1,          1 },
+    ['crocodile'] = { 1, 4, 0, 1, 1, 1, 1 },
+    ['frog'] = { 2, 4, 0, 1, 1, 1, 1 },
+    ['walrus'] = { 2, 4, 0, 1, 1, 1, 1 },
     -- water tier 2
-    ['narwhal'] =   { 3,      10, 0,      3,      1,                  1,          1 },
-    ['whale'] =     { 3,      10, 0,      3,      1,                  1,          1 },
+    ['narwhal'] = { 5, 10, 0, 3, 1, 1, 1 },
+    ['whale'] = { 5, 10, 0, 3, 1, 1, 1 },
     -- water tier 3
 }
 
@@ -182,6 +182,7 @@ function Card:initialize(name)
     self.purchased = false
     self.price = price
     self.hp = hp
+    self.maxHp = hp
     self.block = block
     self.damage = damage
     self.damageMultiplier = damageMultiplier
@@ -201,6 +202,7 @@ function Card:initialize(name)
     self.hpImage = getImage('assets/icons/suit_hearts_outline.png')
     self.damageImage = getImage('assets/icons/sword_outline.png')
     self.blockImage = getImage('assets/icons/shield_outline.png')
+    self.coinImage = getImage('assets/puzzle/Coins/coin_22.png')
     self.isEnemy = false
     self.direction = 1
 end
@@ -317,6 +319,13 @@ function Card:render()
 
     Sprite.render(self)
     local globalX, globalY = self:globalPosition()
+    if not self.purchased and not self.isEnemy then
+        love.graphics.draw(self.coinImage, globalX, globalY + CARD_HEIGHT - 48, 0, 0.32, 0.32)
+        love.graphics.setColor(COLOR_BUTTON_SHADOW)
+        love.graphics.printf(self.price, globalX + 2, globalY + CARD_HEIGHT - 44 + 2, 40, 'center')
+        love.graphics.setColor(COLOR_GREY)
+        love.graphics.printf(self.price, globalX, globalY + CARD_HEIGHT - 44, 40, 'center')
+    end
     if self:isHovering() then
         -- Icon
         love.graphics.draw(self.hpImage, globalX + self.width - CARD_ICON_OFFSET, globalY, 0,
@@ -370,7 +379,29 @@ function Card:render()
             end
         end
     end
-    love.graphics.setColor(COLOR_WHITE)
+    -- HP Bar
+    if self.hp < self.maxHp then
+        local hpBarWidth = 0.75 * self.width
+        local hpBarX = globalX + (self.width - hpBarWidth) / 2
+        local borderWidth = 2
+        -- Shadow
+        love.graphics.setColor(COLOR_BUTTON_SHADOW)
+        love.graphics.rectangle('fill', hpBarX + 2, globalY + CARD_HEIGHT - 16 + 2, hpBarWidth, 12)
+
+        -- Border
+        love.graphics.setColor(COLOR_BLACK)
+        love.graphics.rectangle('fill', hpBarX, globalY + CARD_HEIGHT - 16, hpBarWidth, 12)
+
+        -- Fill
+        love.graphics.setColor(COLOR_WHITE)
+        love.graphics.rectangle('fill', hpBarX + borderWidth, globalY + CARD_HEIGHT - 16 + borderWidth,
+            hpBarWidth - borderWidth * 2, 12 - borderWidth * 2)
+
+        -- HP
+        love.graphics.setColor(self.isEnemy and COLOR_RED or COLOR_GREEN)
+        love.graphics.rectangle('fill', hpBarX + borderWidth, globalY + CARD_HEIGHT - 16 + borderWidth,
+            (hpBarWidth - borderWidth * 2) * (self.hp / self.maxHp), 12 - borderWidth * 2)
+    end
 end
 
 return Card
