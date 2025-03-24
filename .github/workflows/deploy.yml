@@ -18,28 +18,28 @@ jobs:
           
       - name: Download LÖVE
         run: |
-          wget https://github.com/love2d/love/releases/download/11.4/love-11.4-win64.zip
-          wget https://github.com/love2d/love/releases/download/11.4/love-11.4-linux-x86_64.tar.gz
-          wget https://github.com/love2d/love/releases/download/11.4/love-11.4-macos.zip
+          wget https://github.com/love2d/love/releases/download/11.5/love-11.5-win64.zip
+          wget https://github.com/love2d/love/releases/download/11.5/love-11.5-linux-src.tar.gz
+          wget https://github.com/love2d/love/releases/download/11.5/love-11.5-macos.zip
           
       - name: Extract LÖVE
         run: |
-          unzip love-11.4-win64.zip
-          tar xf love-11.4-linux-x86_64.tar.gz
-          unzip love-11.4-macos.zip
+          unzip love-11.5-win64.zip
+          tar xf love-11.5-linux-src.tar.gz
+          unzip love-11.5-macos.zip
           
       - name: Create Windows executable
         run: |
-          cat love-11.4-win64/love.exe barnyard-brawl.love > barnyard-brawl.exe
+          cat love-11.5-win64/love.exe barnyard-brawl.love > barnyard-brawl.exe
           
       - name: Create Linux executable
         run: |
-          cat love-11.4-linux-x86_64/love barnyard-brawl.love > barnyard-brawl
+          cat love-11.5-linux-src/love barnyard-brawl.love > barnyard-brawl
           chmod +x barnyard-brawl
           
       - name: Create Mac executable
         run: |
-          cat love.app/Contents/MacOS/love barnyard-brawl.love > barnyard-brawl-mac
+          cat love-11.5-macos/love.app/Contents/MacOS/love barnyard-brawl.love > barnyard-brawl-mac
           chmod +x barnyard-brawl-mac
           
       - name: Download Butler
