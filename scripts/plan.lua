@@ -4,6 +4,7 @@ Button = require 'scripts.button'
 GameManager = require 'scripts.game_manager'
 InfoBubble = require 'scripts.info_bubble'
 require('scripts.constants')
+getImage = require 'scripts.images'
 local Plan = {}
 
 function Plan:enter(previous, ...)
@@ -25,9 +26,17 @@ function Plan:enter(previous, ...)
     button.onTouch = function()
         Manager:enter(Game)
     end
+    self.button = button
     table.insert(self.sprites, button)
     self.infoBubble = InfoBubble:new("Hello")
     table.insert(self.sprites, self.infoBubble)
+
+    local shopBubble = InfoBubble:new("Move animals to the bottom half to purchase them.")
+    shopBubble.width = 200
+    shopBubble.x = love.graphics.getWidth() - shopBubble.width - 20
+    shopBubble.y = 20
+    table.insert(self.sprites, shopBubble)
+    self.goldImage = getImage('assets/puzzle/Coins/coin_22.png')
 end
 
 function Plan:update(dt)
@@ -63,11 +72,12 @@ function Plan:draw()
     love.graphics.setColor(1, 1, 1)
     local screenWidth = love.graphics.getWidth()
     local screenHeight = love.graphics.getHeight()
-    love.graphics.printf("Gold: " .. GameManager:getInstance().currentGold,
-        0,
-        screenHeight - 48,
+    love.graphics.draw(self.goldImage, self.button.x, self.button.y - 48, 0, 0.32, 0.32)
+    love.graphics.printf(GameManager:getInstance().currentGold,
+        self.button.x + 48,
+        self.button.y - 48,
         screenWidth,
-        'center'
+        'left'
     )
     for _, sprite in pairs(self.sprites) do
         sprite:render()

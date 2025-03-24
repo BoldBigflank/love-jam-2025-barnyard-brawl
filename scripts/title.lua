@@ -15,7 +15,9 @@ function Title:enter(previous, ...)
     self.button.y = 0.75 * love.graphics.getHeight() - 0.5 * self.button.height
     self.button.onTouch = function()
         local gm = GameManager:getInstance()
-        if not gm.gameInProgress then
+        print(gm.gameInProgress)
+        if gm.lives <= 0 then
+            print('reset')
             gm:reset()
         end
         Manager:enter(Plan)
