@@ -1,0 +1,59 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Create .love file
+        run: |
+          cd source
+          zip -r ../barnyard-brawl.love .
+          
+      - name: Download LÖVE
+        run: |
+          wget https://github.com/love2d/love/releases/download/11.4/love-11.4-win64.zip
+          wget https://github.com/love2d/love/releases/download/11.4/love-11.4-linux-x86_64.tar.gz
+          wget https://github.com/love2d/love/releases/download/11.4/love-11.4-macos.zip
+          
+      - name: Extract LÖVE
+        run: |
+          unzip love-11.4-win64.zip
+          tar xf love-11.4-linux-x86_64.tar.gz
+          unzip love-11.4-macos.zip
+          
+      - name: Create Windows executable
+        run: |
+          cat love-11.4-win64/love.exe barnyard-brawl.love > barnyard-brawl.exe
+          
+      - name: Create Linux executable
+        run: |
+          cat love-11.4-linux-x86_64/love barnyard-brawl.love > barnyard-brawl
+          chmod +x barnyard-brawl
+          
+      - name: Create Mac executable
+        run: |
+          cat love.app/Contents/MacOS/love barnyard-brawl.love > barnyard-brawl-mac
+          chmod +x barnyard-brawl-mac
+          
+      - name: Download Butler
+        run: |
+          curl -L -o butler.zip https://broth.itch.ovh/butler/windows-amd64/LATEST/archive/default
+          unzip butler.zip
+          chmod +x butler.exe
+          
+      - name: Push to itch.io
+        env:
+          ITCHIO_API_KEY: ${{ secrets.ITCHIO_API_KEY }}
+          VERSION: ${{ github.run_number }}
+        run: |
+          ./butler.exe push barnyard-brawl.exe ${{ secrets.ITCH_USER }}/${{ secrets.ITCH_GAME }}:windows --userversion ${{ env.VERSION }}
+          ./butler.exe push barnyard-brawl ${{ secrets.ITCH_USER }}/${{ secrets.ITCH_GAME }}:linux --userversion ${{ env.VERSION }}
+          ./butler.exe push barnyard-brawl-mac ${{ secrets.ITCH_USER }}/${{ secrets.ITCH_GAME }}:mac --userversion ${{ env.VERSION }}
+
