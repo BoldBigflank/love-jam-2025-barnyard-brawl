@@ -17,6 +17,7 @@ function Game:enter(previous, ...)
     table.insert(self.sprites, grid)
     grid.x = love.graphics.getWidth() / 2 - grid.width / 2
     grid.y = love.graphics.getHeight() / 2 - grid.height / 2
+    grid.state = "game"
 
     -- Load buttons
     local button = Button:new('Start')
@@ -28,6 +29,8 @@ function Game:enter(previous, ...)
     button.onTouch = function()
         self.shopBubble.text = "Attack in progress!"
         GameManager:getInstance():changeState("game-active")
+
+        grid.state = "action"
         button:destroy()
     end
     self.infoBubble = InfoBubble:new("Hello")
@@ -39,9 +42,16 @@ function Game:enter(previous, ...)
     self.shopBubble.x = love.graphics.getWidth() - self.shopBubble.width - 20
     self.shopBubble.y = 20
     table.insert(self.sprites, self.shopBubble)
+    self.actionTimer = 0
 end
 
 function Game:activeUpdate(dt)
+    self.actionTimer = self.actionTimer + dt
+    if self.actionTimer > 10 then
+        GameManager:getInstance():changeState("failure")
+        self.banner.text = "You Lose!"
+        self.shopBubble.text = "Attack failed!"
+    end
     local grid = Sprite.findByName(self.sprites, "Grid")
     if not grid then
         return
@@ -116,7 +126,9 @@ function Game:activeUpdate(dt)
                             y = enemyY
                         }):ease("linear"):oncomplete(function()
                             particle:destroy()
-                            enemy:takeDamage(card.damage)
+                            if enemy:takeDamage(card.damage) then
+                                self.actionTimer = 0
+                            end
                         end)
                         table.insert(self.sprites, particle)
 

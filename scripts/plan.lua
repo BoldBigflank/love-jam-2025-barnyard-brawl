@@ -70,6 +70,8 @@ end
 
 function Plan:draw()
     love.graphics.setColor(1, 1, 1)
+    love.graphics.printf("Shop Phase", 0, 16, love.graphics.getWidth(), 'center')
+    love.graphics.setColor(1, 1, 1)
     local screenWidth = love.graphics.getWidth()
     local screenHeight = love.graphics.getHeight()
     love.graphics.draw(self.goldImage, self.button.x, self.button.y - 48, 0, 0.32, 0.32)

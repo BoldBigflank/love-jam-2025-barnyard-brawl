@@ -61,10 +61,10 @@ function Title:draw()
         -- Lives left
         love.graphics.printf("Lives left: " .. gm.lives, 0, 100, screenWidth, 'center')
         -- Current Gold
-        love.graphics.printf("Current Gold: " .. gm.currentGold, 0, 132, screenWidth, 'center')
+        love.graphics.printf("Current Gold: " .. gm.currentGold, 0, 148, screenWidth, 'center')
         -- Last outcome
         love.graphics.setColor(COLOR_YELLOW)
-        love.graphics.printf(gm.lastOutcome, 0, 164, screenWidth, 'center')
+        love.graphics.printf(gm.lastOutcome, 0, 196, screenWidth, 'center')
         love.graphics.setColor(COLOR_WHITE)
         -- Outcomes
         local latestOutcomeIndex = 0
@@ -82,7 +82,7 @@ function Title:draw()
         for i = 1, gm.maxLevel do
             local iconWidth = self.pendingImage:getWidth()
             local x = 0.5 * love.graphics.getWidth() - 0.5 * (iconWidth * gm.maxLevel) + (iconWidth * (i - 1))
-            local y = 196
+            local y = 244
             love.graphics.setColor(i == latestOutcomeIndex and flashColor or COLOR_WHITE)
             if gm.outcomes[i] == "Pending" then
                 love.graphics.draw(self.pendingImage, x, y)
@@ -95,7 +95,7 @@ function Title:draw()
     end
     -- Game Over line
     if gm.lives <= 0 then
-        love.graphics.printf("Game Over", 0, 260, screenWidth, 'center')
+        love.graphics.printf("Game Over", 0, 244 + 64, screenWidth, 'center')
     end
 end
 

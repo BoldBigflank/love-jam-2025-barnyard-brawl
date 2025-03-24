@@ -87,7 +87,7 @@ function Grid:findClosestEnemyCard(card)
 end
 
 function Grid:cardDropped(card)
-    if self.state ~= "shop" then
+    if self.state ~= "shop" and self.state ~= "game" then
         return
     end
     local closestX, closestY = self:findClosestPosition(card)
@@ -268,7 +268,16 @@ function Grid:render()
     -- First render empty cells
     for i = 1, self.columns do
         for j = 1, self.rows do
-            love.graphics.setColor(j < 4 and COLOR_BLUE or COLOR_GREEN)
+            local gridColor = j < 4 and COLOR_BLUE or COLOR_GREEN
+            if self.state == "game" then
+                gridColor = j < 4 and COLOR_RED or COLOR_GREEN
+            elseif self.state == "action" then
+                gridColor = COLOR_YELLOW
+                if self.grid[i][j] then
+                    gridColor = self.grid[i][j].isEnemy and COLOR_RED or COLOR_GREEN
+                end
+            end
+            love.graphics.setColor(gridColor)
             love.graphics.rectangle('fill', self.x + (i - 1) * CELL_SIZE,
                 self.y + (j - 1) * CELL_SIZE, CARD_WIDTH, CARD_HEIGHT, 4, 4)
         end

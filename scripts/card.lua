@@ -23,38 +23,38 @@ local animalNumbers = {
 
     -- tree tier 1
     ['monkey'] = { 1, 6, 0, 1, 1, 0.43, 1 },
-    ['sloth'] = { 2, 6, 1, 3, 1, 0.43, 0.43 },
-    ['snake'] = { 4, 4, 0, 2, 1, 0.5, 0.6 },
+    ['sloth'] = { 2, 6, 1, 3, 1, 2.43, 2.43 },
+    ['snake'] = { 4, 4, 0, 2, 4, 0.5, 1.6 },
     -- tree tier 2
     ['gorilla'] = { 6, 11, 2, 6, 1, 0.8, 1 },
 
 
     -- land tier 1
-    ['giraffe'] = { 2, 4, 0, 2, 1, 1, 1 },
-    ['elephant'] = { 1, 4, 2, 1, 1, 1, 1 },
+    ['giraffe'] = { 2, 4, 0, 4, 1, 2, 1 },
+    ['elephant'] = { 1, 4, 2, 4, 1, 4, 1 },
     ['horse'] = { 1, 4, 0, 2, 1, 1, 1 },
     ['hippo'] = { 1, 14, 2, 1, 1, 1, 1 },
     ['goat'] = { 1, 7, 0, 2, 1, 1, 1 },
     ['dog'] = { 2, 4, 0, 3, 1, 1, 1 },
     ['cow'] = { 2, 4, 0, 1, 1, 1, 1 },
-    ['panda'] = { 2, 7, 0, 2, 1, 1, 1 },
-    ['pig'] = { 3, 7, 0, 1, 1, 1, 1 },
+    ['panda'] = { 2, 7, 0, 4, 1, 3, 1 },
+    ['pig'] = { 3, 7, 0, 2, 1, 1, 1 },
     ['rabbit'] = { 3, 4, 0, 1, 1, 1, 1 },
     -- land tier 2
     ['bear'] = { 3, 10, 0, 3, 1, 1, 1 },
     ['zebra'] = { 4, 10, 0, 3, 1, 1, 1 },
-    ['moose'] = { 4, 10, 0, 3, 1, 1, 1 },
-    ['buffalo'] = { 5, 10, 0, 3, 1, 1, 1 },
+    ['moose'] = { 4, 10, 0, 6, 1, 2, 1 },
+    ['buffalo'] = { 5, 10, 0, 5, 1, 1.66, 1 },
     ['rhino'] = { 5, 10, 3, 3, 1, 1.2, 1.2 },
     -- land tier 3
 
     -- water tier 1
-    ['crocodile'] = { 1, 4, 0, 1, 1, 1, 1 },
+    ['crocodile'] = { 1, 4, 0, 2, 1, 2, 1 },
     ['frog'] = { 2, 4, 0, 1, 1, 1, 1 },
-    ['walrus'] = { 2, 7, 0, 1, 1, 1, 1 },
+    ['walrus'] = { 2, 7, 0, 3, 1, 2, 1 },
     -- water tier 2
-    ['narwhal'] = { 5, 10, 0, 3, 1, 1, 1 },
-    ['whale'] = { 5, 13, 0, 3, 1, 1, 1 },
+    ['narwhal'] = { 5, 2, 0, 3, 1, 1, 1 },
+    ['whale'] = { 5, 13, 0, 4, 1, 1.33, 1 },
     -- water tier 3
 }
 
@@ -98,7 +98,7 @@ local animalAttackPositions = {
     ['chick'] = { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } },
     ['chicken'] = { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } },
     ['cow'] = { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } },
-    ['crocodile'] = { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 }, { 0, 2 } },
+    ['crocodile'] = { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 }, { 0, -2 } },
     ['dog'] = { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } },
     ['duck'] = { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } },
     ['elephant'] = { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } },
@@ -264,11 +264,13 @@ function Card:onDragEnd()
 end
 
 function Card:takeDamage(damage)
+    if damage <= self.block then return false end
     self.hp = self.hp - math.max(damage - self.block, 0)
     if self.hp <= 0 then
         self.isDead = true
         self:destroy()
     end
+    return true
 end
 
 function Card:dragUpdate(dt)
