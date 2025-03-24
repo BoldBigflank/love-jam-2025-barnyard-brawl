@@ -1,7 +1,7 @@
 {
     "tasks": [
         {
-            "command": "Stop-Process -Name love -Force -ErrorAction SilentlyContinue; love.exe --console \"${workspaceFolder}\"",
+            "command": "Stop-Process -Name love -Force -ErrorAction SilentlyContinue; love.exe --console \"${workspaceFolder}/source\"",
             "presentation": {
                 "clear": true,
                 "panel": "dedicated",
@@ -13,7 +13,7 @@
             },
             "label": "Run",
             "options": {
-                "cwd": "${workspaceFolder}"
+                "cwd": "${workspaceFolder}/source"
             },
             "type": "shell",
             "problemMatcher": []

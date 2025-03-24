@@ -55,12 +55,12 @@ function Title:draw()
     local screenWidth = love.graphics.getWidth()
     local screenHeight = love.graphics.getHeight()
     -- Title
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.printf("Barnyard Brawl", 0, 32, screenWidth, 'center')
     self.button:render()
     self.abandonButton:render()
     local gm = GameManager:getInstance()
     if gm.gameInProgress then
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.printf("Barnyard Brawl", 0, 32, screenWidth, 'center')
         love.graphics.setColor(COLOR_WHITE)
         -- Lives left
         love.graphics.printf("Lives left: " .. gm.lives, 0, 100, screenWidth, 'center')
@@ -96,6 +96,12 @@ function Title:draw()
                 love.graphics.draw(self.lossImage, x, y)
             end
         end
+    else
+        -- Initial load
+        love.graphics.setColor(COLOR_WHITE)
+        love.graphics.printf("Barnyard Brawl", Font_96, 0, 32, screenWidth, 'center')
+        love.graphics.printf("By Alex Swan", Font_32, 0, 148, screenWidth, 'center')
+        love.graphics.printf("For LÖVE Jam 2025", Font_32, 0, 196, screenWidth, 'center')
     end
     -- Game Over line
     if gm.lives <= 0 then

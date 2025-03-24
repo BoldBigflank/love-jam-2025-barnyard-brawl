@@ -47,7 +47,7 @@ end
 
 function Game:roundOver(levelWon)
     GameManager:getInstance():changeState(levelWon and "success" or "failure")
-    self.banner.text = levelWon and "You Win!" or "You Lose!"
+    self.banner.text = levelWon and "Round Won!" or "Round Lost!"
     self.banner.levelWon = levelWon
     self.shopBubble.text = levelWon and "Attack successful!" or "Attack failed!"
     Flux.to(self.banner, 0.5, {
