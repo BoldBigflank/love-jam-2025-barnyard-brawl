@@ -101,7 +101,7 @@ function Grid:cardDropped(card)
         returnToOriginal = true
     elseif card.purchased and closestY < 4 then
         returnToOriginal = true
-    elseif not card.purchased and GameManager:getInstance().currentGold < card.price then
+    elseif not card.purchased and closestY > 3 and GameManager:getInstance().currentGold < card.price then
         returnToOriginal = true
     end
 
