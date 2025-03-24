@@ -39,11 +39,11 @@ jobs:
           cp barnyard-brawl.love barnyard-brawl.app/Contents/Resources/
           
           # Modify Info.plist
-          sed -i '' 's/org.love2d.love/com.bold-it.barnyard-brawl/g' barnyard-brawl.app/Contents/Info.plist
-          sed -i '' 's/LÖVE/Barnyard Brawl/g' barnyard-brawl.app/Contents/Info.plist
+          sed -i 's/org.love2d.love/com.bold-it.barnyard-brawl/g' barnyard-brawl.app/Contents/Info.plist
+          sed -i 's/LÖVE/Barnyard Brawl/g' barnyard-brawl.app/Contents/Info.plist
           
           # Remove UTExportedTypeDeclarations section
-          sed -i '' '/UTExportedTypeDeclarations/,/<\/dict>/d' barnyard-brawl.app/Contents/Info.plist
+          sed -i '/UTExportedTypeDeclarations/,/<\/dict>/d' barnyard-brawl.app/Contents/Info.plist
           
           # Create zip file with symlinks preserved
           zip -y -r barnyard-brawl-mac.zip barnyard-brawl.app
