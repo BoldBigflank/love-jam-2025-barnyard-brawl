@@ -43,7 +43,7 @@ jobs:
           sed -i 's/LÖVE/Barnyard Brawl/g' barnyard-brawl.app/Contents/Info.plist
           
           # Remove UTExportedTypeDeclarations section
-          sed -i '/UTExportedTypeDeclarations/,/<\/dict>/d' barnyard-brawl.app/Contents/Info.plist
+          sed -i '/UTExportedTypeDeclarations/,/<\/array>/d' barnyard-brawl.app/Contents/Info.plist
           
           # Create zip file with symlinks preserved
           zip -y -r barnyard-brawl-mac.zip barnyard-brawl.app
